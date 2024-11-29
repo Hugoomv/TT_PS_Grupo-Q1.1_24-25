@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">TTPrototipo1</string>
+    <string name="register">Register</string>
+    <string name="send">Send</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="delete_account">Delete account</string>
+    <string name="defaulttext">Hello world</string>
+
+    <string name="logindialogtxt">Log in with an existing account</string>
+    <string name="registerdialogtxt">Create a new account</string>
+    <string name="logoutdialogtxt">Are you sure you want to log out?</string>
+
+    <string name="stablishname">Username:</string>
+    <string name="stablishmail">E-mail:</string>
+    <string name="stablishpassw">Password:</string>
+    <string name="noaccount">Sing up?</string>
+    <string name="yesaccount">Have an account?</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="sendtotext">Mandar a: </string>
+</resources>

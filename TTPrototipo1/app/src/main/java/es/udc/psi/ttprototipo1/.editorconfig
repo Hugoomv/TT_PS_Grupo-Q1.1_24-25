@@ -1,0 +1,21 @@
+[*.java]
+indent_style = space
+indent_size = 4
+tab_width = 4
+max_line_length = 100
+continuation_indent_size = 4
+insert_spaces = true
+java_code_style = Android
+
+[*.xml]
+indent_style = space
+indent_size = 2
+tab_width = 2
+max_line_length = 120
+insert_spaces = true
+
+[*.gradle]
+indent_style = space
+indent_size = 4
+tab_width = 4
+

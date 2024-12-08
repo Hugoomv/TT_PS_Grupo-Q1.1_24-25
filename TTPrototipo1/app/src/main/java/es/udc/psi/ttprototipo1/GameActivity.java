@@ -28,10 +28,14 @@ public class GameActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Habilitar el botón de retroceso
             getSupportActionBar().setDisplayShowHomeEnabled(true); // Mostrar la flecha de retroceso
         }
+        // Obtener el valor de "isBottomPlayer" del Intent
+        boolean isBottomPlayer = getIntent().getBooleanExtra("isBottomPlayer", true);
 
+        //añadir al intent el valor de isbottonplayer al crear la partida
         // Crear una instancia de GameView y añadirla al contenedor
-        GameView gameView = new GameView(this);
-        binder.gameViewContainer.addView(gameView); // Añadimos GameView al contenedor de la vista
+        GameView gameView = new GameView(this, isBottomPlayer); // true para jugador inferior
+        binder.gameViewContainer.addView(gameView);
+
     }
 
     // Manejar el clic en el botón de retroceso

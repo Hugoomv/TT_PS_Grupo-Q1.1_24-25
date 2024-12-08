@@ -10,7 +10,7 @@ import android.view.SurfaceView;
 import android.graphics.Canvas;
 import androidx.annotation.NonNull;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable,OnDiskExitListener  {
     private Thread gameThread;
     private boolean isPlaying;
     private Canvas canvas;
@@ -24,15 +24,29 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private RectF opponentPaddle; // Pala del oponente
     private float paddleWidth = 200; // Ancho de la pala
     private float paddleHeight = 30; // Altura de la pala
+    private boolean isBottomPlayer; // Indica si el jugador está en la posición inferior
+    private boolean isDiskVisible;
 
 
 
-    public GameView(Context context) {
+
+
+
+    public GameView(Context context, boolean isBottomPlayer) {
         super(context);
+        this.isBottomPlayer = isBottomPlayer;
         getHolder().addCallback(this);
         paint = new Paint();
-        disk = new Disk(200, 200, 50); // Disco inicial
+        disk = new Disk(200, 200, 50); // Inicializa el disco
+        if(isBottomPlayer){
+            isDiskVisible = true; // Asegura que el disco sea visible al inicio
+        }else{
+            isDiskVisible = false;
+        }
+
     }
+
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -41,13 +55,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         gameThread = new Thread(this);
         gameThread.start();
 
-        // Inicializar la pala en la parte inferior de la pantalla
-        playerPaddle = new RectF(
-            getWidth() / 2 - paddleWidth / 2, // Centrada horizontalmente
-            getHeight() - 100,               // Cerca del borde inferior
-            getWidth() / 2 + paddleWidth / 2,
-            getHeight() - 70
-        );
+        // Configura la pala según el rol
+        if (isBottomPlayer) {
+            // Pala del jugador en la parte inferior
+            playerPaddle = new RectF(
+                getWidth() / 2 - paddleWidth / 2,
+                getHeight() - 100,
+                getWidth() / 2 + paddleWidth / 2,
+                getHeight() - 70
+            );
+        } else {
+            // Pala del jugador en la parte superior
+            playerPaddle = new RectF(
+                getWidth() / 2 - paddleWidth / 2,
+                100,
+                getWidth() / 2 + paddleWidth / 2,
+                130
+            );
+        }
     }
 
 
@@ -80,18 +105,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     }
 
     private void update(long deltaTime) {
-        disk.update(deltaTime, playerPaddle);
+        if (isDiskVisible && disk != null) {
+            boolean isInPlay = disk.update(deltaTime, playerPaddle, isBottomPlayer, this);
+            if (!isInPlay) {
+                isDiskVisible = false;
+            }
+        }
     }
 
 
 
-    public void draw() {
-        if (getHolder().getSurface().isValid()) {
-            canvas = getHolder().lockCanvas();
-            canvas.drawColor(Color.BLACK); // Fondo negro
 
-            // Dibuja el disco
-            disk.draw(canvas, paint);
+    private void draw() {
+        if (getHolder().getSurface().isValid()) {
+            Canvas canvas = getHolder().lockCanvas();
+            canvas.drawColor(Color.BLACK);
+
+            // Dibuja el disco solo si está visible
+            if (isDiskVisible) {
+                disk.draw(canvas, paint);
+            }
 
             // Dibuja la pala del jugador
             paint.setColor(Color.WHITE);
@@ -113,5 +146,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         return true;
     }
 
+
+    @Override
+    public void onDiskExit(float x, float y, float angle, String sender) {
+        // Manejar la salida del disco
+        isDiskVisible = false;
+
+        // Aquí puedes enviar los datos a Firebase para que el otro jugador lo reciba
+        System.out.println("Disco enviado: posición=(" + x + ", " + y + "), ángulo=" + angle + ", enviado por=" + sender);
+    }
+    public void receiveDisk(float newX, float newY, float newVx, float newVy) {
+        // Actualiza la posición y velocidad del disco
+        disk.setPosition(newX, newY);
+        disk.setVelocity(newVx, newVy);
+
+        // Hacer visible el disco nuevamente
+        isDiskVisible = true;
+    }
 
 }

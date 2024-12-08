@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, GameActivity.class);
+            intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
             startActivity(intent);
         });
 

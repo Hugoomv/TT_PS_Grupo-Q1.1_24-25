@@ -3,6 +3,7 @@ package es.udc.psi.ttprototipo1;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -96,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, GameActivity.class);
             intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
             startActivity(intent);
+            new Handler().postDelayed(() -> startGameButton.setEnabled(true), 500); // Rehabilitar después de 500ms
         });
 
-        uiHelper = new UserInterfaceHelper(this, binder);
-        uiHelper.createUI();
+        //uiHelper = new UserInterfaceHelper(this, binder);
+        //uiHelper.createUI();
 
 
     }

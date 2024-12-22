@@ -164,4 +164,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         isDiskVisible = true;
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        // Libera recursos como hilos, timers, etc.
+    }
+
 }

@@ -55,8 +55,8 @@ Icono de la aplicación\\
 Mateo Rivela Santos (mateo.rivela@udc.es)\\
 Hugo Mato Cancela (hugo.matoc@udc.es)\\
 \textbf{Persona de contacto:} Hugo\\
-\textbf{Fecha:}\textit{ A Coruña, 12 Noviembre 2024}\\
-\textbf{Versión:}\textit{1.1}\\
+\textbf{Fecha:}\textit{ A Coruña, 1 de Diciembre 2024}\\
+\textbf{Versión:}\textit{3.0}\\
 \textbf{Nombre de la aplicación:} \textit{Space Rend Hockey}\\
 \textbf{Github:} \url{https://github.com/Hugoomv/TT_PS_Grupo-Q1.1_24-25}\\
 \end{large}
@@ -94,6 +94,7 @@ Versión & Fecha & Autor \\
 1.1 & 10/11/24 & Hugo\\ \hline
 1.2 & 13/11/24 & Hugo\\ \hline
 2.0 & 16/11/24 & Hugo\\ \hline
+3.0 &  1/12/24 & Hugo\\ \hline
 
 \end{tabular}
 
@@ -218,25 +219,6 @@ En la primera pantalla el usuario se podrá loguear o registrar. Introducirá su
     \item Invitar: Abrirá un desplegable para poder iniciar una partida con otro usuario.
 \end{itemize}
 
-\begin{figure}[htp]
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Images/Vista_It1.jpg}
-        \caption{Figura 1}
-        \label{fig:Pantalla de inicio}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{Images/Vista_It1_2.jpg}
-        \caption{Pantalla una vez logueado}
-        \label{fig:figura2}
-    \end{minipage}
-    \caption{Pantallas de la primera iteración}
-    \label{fig:side_by_side}
-\end{figure}
-
 
 \subsection{Comunicaciones}
 La comunicación en este juego es una parte fundamental. Para ello, buscamos un sistema de baja latencia. Para esta conexión, se contará con un servidor central al que cada cliente se conectará por internet (Firebase), de esta forma, se gana en rango de uso (rango global). Existe un claro problema y es que el servidor del que se va a hacer uso es gratuito y, por lo tanto, la latencia va a ser bastante alta, pero hemos llegado a la conclusión de que es no es crítico para este proyecto porque, como cada usuario en una partida solo va a ver su pantalla a priori. En el caso de que ambos jugadores estén juntos físicamente, la latencia sería notable.
@@ -249,8 +231,9 @@ Se enviarán los datos de la posición y ángulo de la pelota, cada X tiempo. Se
 \section{Arquitectura Propuesta}
 Ahora mismo es una aplicación monolítica y cambiará a CLEAN Arquitecture. En esta primera iteración hay una actividad principal que incluye todo, user y UsersAdapter para el ListView que muestra los usuarios conectados. 
 
-\section{Diseño e implementación de la 1ª iteración}
-Se ha creado una aplicación con una MainActivity, UsersAdapters y User. Partimos de un diseño monolítico, que en un futuro pasará a ser CLEAN Arquitecture. En la MainActivity está la mayor parte del código, como es la UI. La interfaz incluye en la parte superior un TextView que mostrará los mensajes que recibamos de otros jugadores. Después, un EditText donde escribir el mensaje que queremos enviar a otros jugadores. Más abajo, están cuatro botones. Por último, un TextView con nuestro nombre de usuario y el email. Este último TextView no mostrará nada si el usuario no está logueado. Además, se ha añadido toast para informar al usuario si hay problemas al iniciar sesión, conectarse...
+\section{Diseño e implementación}
+\subsection{1ª iteración}
+Se ha creado una aplicación con una MainActivity, UsersAdapters y User. Partimos de un diseño monolítico, que en un futuro pasará a ser CLEAN Arquitecture. En la MainActivity está la mayor parte del código, como es la UI. La interfaz incluye en la parte superior un TextView que mostrará los mensajes que recibamos de otros jugadores. Después, un EditText donde escribir el mensaje que queremos enviar a otros jugadores. Más abajo, están cuatro botones. Por último, un TextView con nuestro nombre de usuario y el email. Este último TextView no mostrará nada si el usuario no está logueado. Además, se ha añadido un toast para informar al usuario si hay problemas al iniciar sesión, conectarse...
 A continuación se explica el funcionamiento de los botones:
 \begin{itemize}
     \item Send: muestra un desplegable con los usuarios conectados a los que podemos enviar un mensaje. Deshabilitado si el usuario no ha iniciado sesión.
@@ -258,12 +241,60 @@ A continuación se explica el funcionamiento de los botones:
     \item Login: iniciar sesión. Muestra AlertDialog para introducir los datos, correo y contraseña. Además, aparece un botón para cambiar a register. Deshabilitado si el usuario ya ha iniciado sesión.
     \item Register: registrar usuario. Muestra un AlertDialog similar al de login y también tiene el botón para alternar a login. Deshabilitado si el usuario ya ha iniciado sesión.
 \end{itemize}
+En la figura 1 se muestran unas imágenes de la interfaz. 
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It1.jpg} 
+        \caption{Pantalla de inicio}
+        \label{fig:Pantalla de inicio}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It1_2.jpg} 
+        \caption{Pantalla una vez iniciada sesión}
+        \label{fig:figura2}
+    \end{minipage}
+    \caption{Pantallas de la primera iteración}
+    \label{fig:side_by_side}
+\end{figure}
 
 UsersAdapters y Users es usado para la implementación del ListView que muestra los usuarios conectados (tras pulsar Send). La app se conecta a Firebase, donde se han creado varios usuarios para comprobar que funciona correctamente, con su login y logout, y se ha implementado el envío de mensajes, lo que representaría a los primeros hitos.
 Finalmente, también se ha inicializado la base de datos haciendo uso del json.
 
-\section{$1^{ras} \text{ pruebas}$}
-Se han usado dos emuladores en la misma máquina para comprobar el funcionamiento de la aplicación. Se han comprobado el registro de usuarios, el login, el logout, la creación de datos en la base de datos en tiempo real y el paso de mensajes usando Firebase. Adicionalmente, se han usado varios equipos distintos, y se han comunicado varias apps de emuladores y equipos diferentes.
+\subsection{2ª iteración}
+Para esta iteración, la intención era crear un nuevo prototipo donde ver el funcionamiento de las físicas de la pelota, como se comenta en el apartado de iteraciones. Los rebotes de la pelota son una mecánica fundamental del juego, por lo que se debe lograr lo antes posible. Se ha decidido unir ambos prototipos, debido a que se considera que crear uno separado solamente para el apartado de físicas era poco productivo, incómodo e innecesario. \\ 
+Al mismo tiempo que se implementaban las físicas, otra parte del equipo que estaba libre, decidió actualizar la interfaz de usuario para mejorar su aspecto. Para ello se ha hecho uso de estilos, buscando homogeneidad y separación de los bordes y otros elementos. También se ha añadido un menú lateral donde ver la foto de perfil (por implementar), la configuración (de momento vacía) y poder salir de la aplicación. En un futuro, puede que se modifique por un cambio de diseño y por la comodidad del usuario. Además, la interfaz principal ahora es un Drawer donde está el layout anterior y la toolbar con el botón para el menú lateral.\\ 
+Por último, también se comenzó con la transición para cambiar el diseño monolítico de la aplicación. Las funciones responsables de la creación del menú están en un fichero distinto llamado UserInterfaceHelper. Estas incluyen la creación del menú lateral, el botón del menú en el toolbar, la gestión del drawer y opciones del menú.
+La figura 2 contiene 2 capturas donde se ve el nuevo diseño de la UI y el menú lateral.
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/Vista_It2.png} 
+        \caption{Pantalla de inicio}
+        \label{fig:Pantalla de inicio}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/Vista_It2_2.png} 
+        \caption{Menú lateral}
+        \label{fig:figura2}
+    \end{minipage}
+    \caption{Pantallas de la segunda iteración}
+    \label{fig:side_by_side}
+\end{figure}
+
+
+\section{Pruebas}
+\subsection{$1^{as} \text{ pruebas}$}
+Se han usado dos emuladores en la misma máquina para comprobar el funcionamiento de la aplicación. Se ha comprobado el registro de usuarios, el login, el logout, la creación de datos en la base de datos en tiempo real y el paso de mensajes usando Firebase. Adicionalmente, se han usado varios equipos distintos y se han comunicado varias apps de emuladores y equipos diferentes.
+
+\subsection{$2^{as} \text{ pruebas}$}
+Para el segundo hito se han realizado comprobaciones de que la pelota rebota correctamente. Al iniciar el juego, esta se mueve hasta que se cierra esta pantalla. Además, se revisa el estado de la UI tras los cambios, ejecutando todas las funciones comprometidas y verificando su correcto desenvolvimiento. Esto se aplica para el menú lateral, la toolbar y los botones a los que se aplicó un cambio de estilo y/o funcionamiento.
 
 %%%%%%%
 

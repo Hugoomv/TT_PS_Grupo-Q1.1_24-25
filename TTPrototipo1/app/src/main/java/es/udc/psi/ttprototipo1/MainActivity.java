@@ -3,6 +3,7 @@ package es.udc.psi.ttprototipo1;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -13,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,26 +37,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.udc.psi.ttprototipo1.UserInterface.UserInterfaceHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
-import es.udc.psi.ttprototipo1.databinding.LoginDialogBinding;
-import es.udc.psi.ttprototipo1.databinding.RegisterDialogBinding;
-import es.udc.psi.ttprototipo1.databinding.SelectUsrDialogBinding;
+import es.udc.psi.ttprototipo1.databinding.UserLoginDialogBinding;
+import es.udc.psi.ttprototipo1.databinding.UserRegisterDialogBinding;
+import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binder;
     private View myView;
 
-    private LoginDialogBinding loginBinder;
+    private UserLoginDialogBinding loginBinder;
     private View loginView;
 
-    private RegisterDialogBinding registerBinder;
+    private UserRegisterDialogBinding registerBinder;
     private View registerView;
 
     private FirebaseAuth mAuth;
 
     private DatabaseReference myData;
     private ValueEventListener myDataListener;
+
+    private UserInterfaceHelper uiHelper;
+
+    private DrawerLayout drawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
         myView = binder.getRoot();
 
         setContentView(myView);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        
+
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -85,31 +94,36 @@ public class MainActivity extends AppCompatActivity {
         Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, GameActivity.class);
+            intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
             startActivity(intent);
         });
+
+        uiHelper = new UserInterfaceHelper(this, binder);
+        uiHelper.createUI();
+
 
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
 
         View.OnClickListener iListen = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v.getId() == binder.registerButton.getId()){
+                if (v.getId() == binder.registerButton.getId()) {
 
                     //alertdialog para registrar nuevo usuario
                     alertRegisterUser();
 
-                }else if(v.getId() == binder.loginButton.getId()){
+                } else if (v.getId() == binder.loginButton.getId()) {
 
                     //alertdialog para iniciar sesion como un usuario concreto
                     alertLogUser();
 
-                }else if(v.getId() == binder.logoutButton.getId()){
+                } else if (v.getId() == binder.logoutButton.getId()) {
 
-                    if(mAuth.getCurrentUser() != null){
+                    if (mAuth.getCurrentUser() != null) {
                         //alertdialog para confirmar cierre de sesión
                         new AlertDialog.Builder(MainActivity.this).setMessage(R.string.logoutdialogtxt).setNegativeButton(R.string.cancel, (dialog, which) -> {
                             dialog.dismiss();
@@ -120,25 +134,25 @@ public class MainActivity extends AppCompatActivity {
                             binder.sendButton.setEnabled(false);
                             binder.userInfo.setText("");
                         }).create().show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
                     }
 
 
-                }else if(v.getId() == binder.sendButton.getId()){
+                } else if (v.getId() == binder.sendButton.getId()) {
 
                     //alertdialog para mandar mensaje en el edittext
-                    if(!binder.messageToSend.getText().toString().trim().isEmpty()) {
+                    if (!binder.messageToSend.getText().toString().trim().isEmpty()) {
                         sendButtonAlert();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), "No message", Toast.LENGTH_SHORT).show();
                     }
 
-                }else if(v.getId() == binder.deleteUserButton.getId()){
+                } else if (v.getId() == binder.deleteUserButton.getId()) {
                     //delete user
-                    if(mAuth.getCurrentUser() != null){
+                    if (mAuth.getCurrentUser() != null) {
                         deleteUserAlert();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -187,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void alertRegisterUser(){
-        registerBinder = RegisterDialogBinding.inflate(getLayoutInflater());
+        registerBinder = UserRegisterDialogBinding.inflate(getLayoutInflater());
         registerView = registerBinder.getRoot();
 
         AlertDialog registerDialog = new AlertDialog.Builder(MainActivity.this).setView(registerView).setMessage(R.string.registerdialogtxt).setPositiveButton(R.string.ok, (dialog, which) ->{
@@ -208,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void alertLogUser(){
-        loginBinder = LoginDialogBinding.inflate(getLayoutInflater());
+        loginBinder = UserLoginDialogBinding.inflate(getLayoutInflater());
         loginView = loginBinder.getRoot();
 
         AlertDialog loginDialog = new AlertDialog.Builder(MainActivity.this).setView(loginView).setMessage(R.string.logindialogtxt).setPositiveButton(R.string.ok, (dialog, which) ->{
@@ -294,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendButtonAlert(){
-        SelectUsrDialogBinding usrSelectBinding = SelectUsrDialogBinding.inflate(getLayoutInflater());
+        UserSelectUsrDialogBinding usrSelectBinding = UserSelectUsrDialogBinding.inflate(getLayoutInflater());
         View usrSelectView = usrSelectBinding.getRoot();
         ListView listView = usrSelectBinding.userList;
 
@@ -479,6 +493,16 @@ public class MainActivity extends AppCompatActivity {
         })).setNegativeButton("Cancelar", ((dialog, which) -> {
             dialog.dismiss();
         })).create().show();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(uiHelper.handleDrawerToggle(item)){
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

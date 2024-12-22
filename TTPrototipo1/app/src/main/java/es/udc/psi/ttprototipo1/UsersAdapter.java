@@ -35,7 +35,7 @@ public class UsersAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_users, parent, false);
+                    .inflate(R.layout.user_view_users, parent, false);
         }
 
         // Obtener el usuario actual

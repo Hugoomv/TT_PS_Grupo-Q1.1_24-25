@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import es.udc.psi.ttprototipo1.UserInterface.UserInterfaceHelper;
+import es.udc.psi.ttprototipo1.UserInterface.UIHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
 import es.udc.psi.ttprototipo1.databinding.UserLoginDialogBinding;
 import es.udc.psi.ttprototipo1.databinding.UserRegisterDialogBinding;
@@ -61,10 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference myData;
     private ValueEventListener myDataListener;
 
-    private UserInterfaceHelper uiHelper;
-
-    private DrawerLayout drawerLayout;
-
+    private UIHelper uiHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,14 +99,27 @@ public class MainActivity extends AppCompatActivity {
         startGameButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, GameActivity.class);
             intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             new Handler().postDelayed(() -> startGameButton.setEnabled(true), 500); // Rehabilitar después de 500ms
         });
 
-        uiHelper = new UserInterfaceHelper(this, binder);
-        uiHelper.createUI();
+        Log.d("_TAG","Antes de creacion de UI");
 
+        // Pasar las vistas necesarias a UIHelper
+        uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar);
+        uiHelper.setupToolbar();
+        uiHelper.setupDrawer();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (binder.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binder.drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -500,16 +511,6 @@ public class MainActivity extends AppCompatActivity {
         })).setNegativeButton("Cancelar", ((dialog, which) -> {
             dialog.dismiss();
         })).create().show();
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(uiHelper.handleDrawerToggle(item)){
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
 }

@@ -17,4 +17,17 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
+    <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
+        <!-- Fondo de la pantalla -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- Ícono del Splash Screen -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+
+        <!-- Duración mínima de la pantalla -->
+        <item name="postSplashScreenTheme">@style/Theme.TTPrototipo1</item>
+    </style>
+
+
 </resources>

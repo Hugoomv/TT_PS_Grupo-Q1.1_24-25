@@ -34,4 +34,11 @@
     <string name="profile_picture">profile_picture</string>
     <string name="enter_message">Introduce los datos</string>
     <string name="introduzca_el_mensaje_a_enviar_et">Introduzca el mensaje a enviar</string>
+    <string name="menu_group">Grupo</string>
+    <string name="menu_ajustes">Ajustes</string>
+    <string name="menu_salir">Salir de la app</string>
+    <string name="title_click">Title click</string>
+    <string name="menu_camera">Camera</string>
+    <string name="menu_gallery">Galeria</string>
+    <string name="texto_de_prueba">Texto de prueba</string>
 </resources>

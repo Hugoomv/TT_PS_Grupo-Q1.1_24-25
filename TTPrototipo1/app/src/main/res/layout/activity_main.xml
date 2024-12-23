@@ -6,13 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
     <!-- Contenido principal -->
     <LinearLayout
@@ -20,8 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_below="@id/toolbar"
-        android:paddingTop="100dp"> <!-- rev -->
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
 
         <TextView
             android:id="@+id/message_sent"
@@ -77,15 +76,19 @@
             android:textSize="20sp"
             android:text="" />
 
-
     </LinearLayout>
 
     <!-- Menú lateral -->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
+        android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/menu_drawer_menu" />
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:itemBackground="@drawable/drawer_background_selector"
+        app:itemIconTint="@drawable/drawer_selector"
+        app:itemTextColor="@drawable/drawer_selector"
+        app:menu="@menu/activity_main_navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -47,4 +47,11 @@ public class GameActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binder.gameViewContainer.removeAllViews(); // Limpia las vistas del contenedor
+    }
+
 }

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -67,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // pantalla de inicio al abrir la aplicacion
+        SplashScreen.installSplashScreen(this);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
@@ -100,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(() -> startGameButton.setEnabled(true), 500); // Rehabilitar después de 500ms
         });
 
-        //uiHelper = new UserInterfaceHelper(this, binder);
-        //uiHelper.createUI();
+        uiHelper = new UserInterfaceHelper(this, binder);
+        uiHelper.createUI();
 
 
     }

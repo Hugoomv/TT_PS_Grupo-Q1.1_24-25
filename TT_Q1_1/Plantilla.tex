@@ -55,8 +55,8 @@ Icono de la aplicación\\
 Mateo Rivela Santos (mateo.rivela@udc.es)\\
 Hugo Mato Cancela (hugo.matoc@udc.es)\\
 \textbf{Persona de contacto:} Hugo\\
-\textbf{Fecha:}\textit{ A Coruña, 1 de Diciembre 2024}\\
-\textbf{Versión:}\textit{3.0}\\
+\textbf{Fecha:}\textit{ A Coruña, 24 de Diciembre 2024}\\
+\textbf{Versión:}\textit{4.0}\\
 \textbf{Nombre de la aplicación:} \textit{Space Rend Hockey}\\
 \textbf{Github:} \url{https://github.com/Hugoomv/TT_PS_Grupo-Q1.1_24-25}\\
 \end{large}
@@ -95,6 +95,7 @@ Versión & Fecha & Autor \\
 1.2 & 13/11/24 & Hugo\\ \hline
 2.0 & 16/11/24 & Hugo\\ \hline
 3.0 &  1/12/24 & Hugo\\ \hline
+4.0 & 24/12/24 & Hugo\\ \hline
 
 \end{tabular}
 
@@ -187,13 +188,13 @@ Cada prototipo será una entrega.
 
 %%
 \subsection{Incidencias}
-No tenemos conocimientos sobre gráficos o físicas por lo que tendremos que aprender y probar todo lo relacionado a eso. Además, para paliar esas carencias, tenemos pensado usar LibGDX\cite{misc-libGDX} y KryoNet\cite{misc-kryonet} para la codificación general de juego. Y usaremos las librerías Box2d\cite{misc-box2d}, Tween Engine\cite{misc-tween} para las físicas y las animaciones respectivamente. Para establecer conexión se hará uso de Firebase\cite{misc-firebase}. En lo relacionado a Android, tomaremos como referencia lo enseñado en clase y la documentación oficial\cite{misc-android-developers}. Por último, en lo relacionado a los gráficos y apartado más visual, Canva \cite{misc-canva}.
+No tenemos conocimientos sobre gráficos o físicas por lo que tendremos que aprender y probar todo lo relacionado a eso. Además, para paliar esas carencias, tenemos pensado usar LibGDX\cite{misc-libGDX} y KryoNet\cite{misc-kryonet} para la codificación general de juego. Y usaremos las librerías Box2d\cite{misc-box2d}, Tween Engine\cite{misc-tween} para las físicas y las animaciones, respectivamente. Para establecer la conexión se hará uso de Firebase\cite{misc-firebase}. En lo relacionado a Android, tomaremos como referencia lo enseñado en clase y la documentación oficial\cite{misc-android-developers}. Por último, en lo relacionado a los gráficos y apartado más visual, Canva \cite{misc-canva}.
 \par
-En la primera iteración, probaremos la conexión entre dispositivos y que el objeto se pasa correctamente entre ellos.
-En la segunda, en un prototipo distinto, el objeto debe rebotar contra los bordes de la pantalla de un dispositivo para que funcionen como paredes
-En la tercera, implementamos la maza, que debe responder correctamente al input del usuario, y nos aseguramos que la pelota rebote correctamente contra esta.
-En la cuarta, el menú nos debe permitir cambiar entre varios prototipos
-En la quinta, uniremos las funcionalidades de las dos primeras iteraciones y nos aseguraremos de que funcionan correctamente ambas al mismo tiempo
+En la primera iteración, probaremos la conexión entre dispositivos y que el objeto pasa correctamente entre ellos.
+En la segunda, en un prototipo distinto, el objeto debe rebotar contra los bordes de la pantalla de un dispositivo para que funcionen como paredes.
+En la tercera, implementamos la maza, que debe responder correctamente al input del usuario, y nos aseguramos de que la pelota rebote correctamente contra esta.
+En la cuarta, el menú nos debe permitir cambiar entre varios prototipos.
+En la quinta, uniremos las funcionalidades de las dos primeras iteraciones y nos aseguraremos de que funcionan correctamente ambas al mismo tiempo.
 En la sexta, añadiremos bloques que funcionen como paredes. La pelota debe rebotar contra estos como lo hace con los bordes de la pantalla.
 En la última, comprobaremos que, tras haber implementado todo, funciona correctamente.
 \par
@@ -203,7 +204,7 @@ En caso de que alguien enferme repartiremos el trabajo asignado a esa persona en
 %%%%%%%
 \section{Diseño}
 \subsection{Arquitectura}
-Se hará uso de una arquitectura centralizada cliente servidor. La distribución de trabajo se hará entre el servidor (Firebase) y el cliente (el usuario de nuestra app). El servidor almacena la información de los usuarios, y los mensajes que envían. Guardará datos como si el usuario está conectado o no, su id (único para cada uno), nombre, correo y contraseña. El cliente revisa el usuario actual, con el que estamos logueados, en el servidor y tiene un listener que escucha los cambios, como son los mensajes recibidos por otros usuarios.
+Se hará uso de una arquitectura centralizada cliente-servidor. La distribución de trabajo se hará entre el servidor (Firebase) y el cliente (el usuario de nuestra app). El servidor almacena la información de los usuarios y los mensajes que envían. Guardará datos como si el usuario está conectado o no, su id (único para cada uno), nombre, correo y contraseña. El cliente revisa el usuario actual, con el que estamos logueados, en el servidor y tiene un listener que escucha los cambios, como son los mensajes recibidos por otros usuarios.
 
 
 \subsection{Persistencia}
@@ -221,10 +222,10 @@ En la primera pantalla el usuario se podrá loguear o registrar. Introducirá su
 
 
 \subsection{Comunicaciones}
-La comunicación en este juego es una parte fundamental. Para ello, buscamos un sistema de baja latencia. Para esta conexión, se contará con un servidor central al que cada cliente se conectará por internet (Firebase), de esta forma, se gana en rango de uso (rango global). Existe un claro problema y es que el servidor del que se va a hacer uso es gratuito y, por lo tanto, la latencia va a ser bastante alta, pero hemos llegado a la conclusión de que es no es crítico para este proyecto porque, como cada usuario en una partida solo va a ver su pantalla a priori. En el caso de que ambos jugadores estén juntos físicamente, la latencia sería notable.
+La comunicación en este juego es una parte fundamental. Para ello, buscamos un sistema de baja latencia. Para esta conexión, se contará con un servidor central al que cada cliente se conectará por internet (Firebase), de esta forma, se gana en rango de uso (rango global). Existe un claro problema y es que el servidor del que se va a hacer uso es gratuito y, por lo tanto, la latencia va a ser bastante alta, pero hemos llegado a la conclusión de que no es crítico para este proyecto porque, como cada usuario en una partida solo va a ver su pantalla a priori. En el caso de que ambos jugadores estén juntos físicamente, la latencia sería notable.
 
 \subsection{Sensores}
-Se hace uso de la pantalla táctil, con este se implementará el movimiento del mazo en cuestión. Es un dispositivo que detecta y responde al contacto físico o la presión sobre su superficie, en este caso no se hará uso de la detección de la presión. Para la implementación del rebote se puede tener o no en cuenta la velocidad con la que se desplaza en contacto con el panel táctil pero no es algo que vayamos a implementar en nuestro caso desde a priori.
+Se hace uso de la pantalla táctil, con este se implementará el movimiento del mazo en cuestión. Es un dispositivo que detecta y responde al contacto físico o la presión sobre su superficie, en este caso no se hará uso de la detección de la presión. Para la implementación del rebote se puede tener o no en cuenta la velocidad con la que se desplaza en contacto con el panel táctil, pero no es algo que vayamos a implementar en nuestro caso desde a priori.
 \subsection{Trabajo en background}
 Se enviarán los datos de la posición y ángulo de la pelota, cada X tiempo. Se usa Firebase para trabajar con una comunicación y latencia en tiempo real. Para controlar la velocidad de actualización de la pantalla y evitar sobrecargar la CPU, usaremos un servicio que recibirá las coordenadas del servidor. Con cada nueva información, se modificará la posición de la pelota en la pantalla.
 
@@ -267,27 +268,64 @@ Finalmente, también se ha inicializado la base de datos haciendo uso del json.
 \subsection{2ª iteración}
 Para esta iteración, la intención era crear un nuevo prototipo donde ver el funcionamiento de las físicas de la pelota, como se comenta en el apartado de iteraciones. Los rebotes de la pelota son una mecánica fundamental del juego, por lo que se debe lograr lo antes posible. Se ha decidido unir ambos prototipos, debido a que se considera que crear uno separado solamente para el apartado de físicas era poco productivo, incómodo e innecesario. \\ 
 Al mismo tiempo que se implementaban las físicas, otra parte del equipo que estaba libre, decidió actualizar la interfaz de usuario para mejorar su aspecto. Para ello se ha hecho uso de estilos, buscando homogeneidad y separación de los bordes y otros elementos. También se ha añadido un menú lateral donde ver la foto de perfil (por implementar), la configuración (de momento vacía) y poder salir de la aplicación. En un futuro, puede que se modifique por un cambio de diseño y por la comodidad del usuario. Además, la interfaz principal ahora es un Drawer donde está el layout anterior y la toolbar con el botón para el menú lateral.\\ 
-Por último, también se comenzó con la transición para cambiar el diseño monolítico de la aplicación. Las funciones responsables de la creación del menú están en un fichero distinto llamado UserInterfaceHelper. Estas incluyen la creación del menú lateral, el botón del menú en el toolbar, la gestión del drawer y opciones del menú.
+Por último, también se comenzó con la transición para cambiar el diseño monolítico de la aplicación. Las funciones responsables de la creación del menú están en un fichero distinto llamado UIHelper. Estas incluyen la creación del menú lateral, el botón del menú en el toolbar, la gestión del drawer y las opciones del menú.
 La figura 2 contiene 2 capturas donde se ve el nuevo diseño de la UI y el menú lateral.
 \begin{figure}[htp]
     \centering
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}{0.3\textwidth}
         \centering
         \includegraphics[width=0.8\textwidth]{Images/Vista_It2.png} 
         \caption{Pantalla de inicio}
         \label{fig:Pantalla de inicio}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}{0.3\textwidth}
         \centering
         \includegraphics[width=0.8\textwidth]{Images/Vista_It2_2.png} 
         \caption{Menú lateral}
+        \label{fig:figura2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/Vista_It2_3.png} 
+        \caption{Pantalla de juego}
         \label{fig:figura2}
     \end{minipage}
     \caption{Pantallas de la segunda iteración}
     \label{fig:side_by_side}
 \end{figure}
 
+\subsection{3ª iteración}
+
+De cara a cumplir con lo planeado para el {$3^{er}$} entregable, se ha actualizado el juego para que incluya la maza (como se especificó en los hitos), que permite al usuario interactuar con la pelota de forma mucho más similar al juego final. Además, se ha iniciado el trabajo en el apartado de enviar el disco entre dos pantallas. Ahora, cuando toca la parte superior de la pantalla, la aplicación supone que ya se ha salido de nuestro campo. La lógica que envía los datos por Firebase y se encarga de recibir los datos en el otro jugador aún está por implementar.\\
+En la interfaz, se han actualizado los colores principales de la app, junto a pequeños retoques en la toolbar. También se modificó el menú lateral, que ahora es de tipo ModalNavigationDrawer. Este es el más común y resultará familiar al usuario. Se abre desde la izquierda y no ocupa toda la pantalla. Se ha añadido un imageView, que en un futuro servirá para las imágenes de perfil de los usuarios. Adicionalmente, están varias opciones básicas (sin implementación) y la opción de salir de la app. Por último, como se pueden ver en las imágenes de la figura 7, se ha cambiado la SplashScreen (pantalla de carga inicial, al abrir el juego) con una animación (animated vector) sobre un icono de prueba y un nuevo tema que se aplica a la aplicación en el manifiesto.
+
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/Vista_It3_3.png} 
+        \caption{Nueva SplashScreen}
+        \label{fig:figura2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/Vista_It3.png} 
+        \caption{Pantalla de inicio}
+        \label{fig:Pantalla de inicio}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{Images/Vista_It3_2.png} 
+        \caption{Nuevo menú lateral}
+        \label{fig:figura2}
+    \end{minipage}
+    \caption{Pantallas de la tercera iteración}
+    \label{fig:side_by_side}
+\end{figure}
 
 \section{Pruebas}
 \subsection{$1^{as} \text{ pruebas}$}
@@ -296,6 +334,9 @@ Se han usado dos emuladores en la misma máquina para comprobar el funcionamient
 \subsection{$2^{as} \text{ pruebas}$}
 Para el segundo hito se han realizado comprobaciones de que la pelota rebota correctamente. Al iniciar el juego, esta se mueve hasta que se cierra esta pantalla. Además, se revisa el estado de la UI tras los cambios, ejecutando todas las funciones comprometidas y verificando su correcto desenvolvimiento. Esto se aplica para el menú lateral, la toolbar y los botones a los que se aplicó un cambio de estilo y/o funcionamiento.
 
+
+\subsection{$3^{as} \text{ pruebas}$}
+Las pruebas para el {$3^{er}$} entregable son básicas. Para la SplashScreen simplemente se revisa que funciona al iniciar app y que se aplica el tema correspondiente después. Para el nuevo menú, se han añadido toast para comprobar que funciona correctamente a pesar de no tener implementación. Finalmente, el juego se testea haciendo uso de la maza y lanzando la pelota a la parte superior de la pantalla.
 %%%%%%%
 
 \section{Bibliografía}

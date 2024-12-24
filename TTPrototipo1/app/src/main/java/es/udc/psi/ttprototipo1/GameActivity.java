@@ -1,5 +1,6 @@
 package es.udc.psi.ttprototipo1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -43,6 +44,9 @@ public class GameActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();  // Este método cierra la actividad y regresa a la anterior
+            Intent resultIntent = new Intent();
+            setResult(RESULT_OK, resultIntent);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -1,6 +1,7 @@
 package es.udc.psi.ttprototipo1;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,12 +42,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.udc.psi.ttprototipo1.UserInterface.UIHelper;
+import es.udc.psi.ttprototipo1.databinding.ActivityLoginBinding;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
 import es.udc.psi.ttprototipo1.databinding.UserLoginDialogBinding;
 import es.udc.psi.ttprototipo1.databinding.UserRegisterDialogBinding;
 import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
+    private UsersFireBaseManagement usersFireBaseManagement = UsersFireBaseManagement.getInstance();
 
     private ActivityMainBinding binder;
     private View myView;
@@ -58,9 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private View registerView;
 
     private FirebaseAuth mAuth;
-
-    private DatabaseReference myData;
-    private ValueEventListener myDataListener;
 
     private UIHelper uiHelper;
 
@@ -85,25 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if(currentUser != null){
-            binder.userInfo.setText(getString(R.string.stablishname) + " " + currentUser.getDisplayName() +"\n" + getString(R.string.stablishmail) + " " + currentUser.getEmail());
-            binder.loginButton.setEnabled(false);
-            binder.registerButton.setEnabled(false);
-        }else{
-            Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
-            binder.sendButton.setEnabled(false);
-        }
-        Button startGameButton = findViewById(R.id.startGameButton);
-        startGameButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, GameActivity.class);
-            intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            new Handler().postDelayed(() -> startGameButton.setEnabled(true), 500); // Rehabilitar después de 500ms
-        });
-
         Log.d("_TAG","Antes de creacion de UI");
 
         // Pasar las vistas necesarias a UIHelper
@@ -125,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        binder.startGameButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, GameActivity.class);
+            intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            new Handler().postDelayed(() -> binder.startGameButton.setEnabled(true), 500); // Rehabilitar después de 500ms
+        });
 
         View.OnClickListener iListen = new View.OnClickListener() {
             @Override
@@ -190,32 +181,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        if(mAuth.getCurrentUser() != null) {
-            updateUserConnectionStatus(true);
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if(currentUser != null){
+            binder.userInfo.setText(getString(R.string.stablishname) + " " + currentUser.getDisplayName() +"\n" + getString(R.string.stablishmail) + " " + currentUser.getEmail());
+            binder.loginButton.setEnabled(false);
+            binder.registerButton.setEnabled(false);
+            rtFireBaseManagement.updateUserConnectionStatus(mAuth.getCurrentUser(), true);
+        }else{
+            Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
+            binder.sendButton.setEnabled(false);
+
+            Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(goLogin);
+            finish();
         }
 
     }
 
     @Override
     protected void onStop(){
-        if(mAuth.getCurrentUser() != null) {
-            updateUserConnectionStatus(false);
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if(currentUser != null) {
+            rtFireBaseManagement.updateUserConnectionStatus(currentUser, false);
         }
         super.onStop();
-    }
-
-    private void updateUserConnectionStatus(boolean isConnected) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-
-        userRef.child("isConnected").setValue(isConnected);  // Actualizar el estado de conexión
-        userRef.child("lastSeen").setValue(ServerValue.TIMESTAMP);  // Actualizar el último tiempo de conexión
-
-        // Configurar onDisconnect para manejar desconexión inesperada
-        if (isConnected) {
-            userRef.child("isConnected").onDisconnect().setValue(false);
-            userRef.child("lastSeen").onDisconnect().setValue(ServerValue.TIMESTAMP);
-        }
     }
 
     private void alertRegisterUser(){
@@ -261,36 +254,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Inicio de sesión exitoso
-                            FirebaseUser user = mAuth.getCurrentUser();
+        usersFireBaseManagement.loginUser(email, password, mAuth, MainActivity.this, new UserLoginCallback() {
+            @Override
+            public void onSuccess() {
+                // Inicio de sesión exitoso
+                FirebaseUser user = mAuth.getCurrentUser();
 
-                            String myName = user.getDisplayName();
+                String myName = user.getDisplayName();
 
-                            Toast.makeText(MainActivity.this, "Bienvenido, " + myName, Toast.LENGTH_SHORT).show();
-                            binder.userInfo.setText(getString(R.string.stablishname) + " " + myName +"\n" + getString(R.string.stablishmail) + " " + user.getEmail());
-                            binder.loginButton.setEnabled(false);
-                            binder.registerButton.setEnabled(false);
-                            binder.sendButton.setEnabled(true);
-                            updateUserConnectionStatus(true);
-                            listenToChanges();
-                        } else {
-                            // Si falla el inicio de sesión, muestra un mensaje
-                            Toast.makeText(MainActivity.this, task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                Toast.makeText(MainActivity.this, "Bienvenido, " + myName, Toast.LENGTH_SHORT).show();
+                binder.userInfo.setText(getString(R.string.stablishname) + " " + myName +"\n" + getString(R.string.stablishmail) + " " + user.getEmail());
+                binder.loginButton.setEnabled(false);
+                binder.registerButton.setEnabled(false);
+                binder.sendButton.setEnabled(true);
+                rtFireBaseManagement.updateUserConnectionStatus(user, true);
+                listenToChanges();
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                Toast.makeText(MainActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void logoutUser(){
-        updateUserConnectionStatus(false);
-        stopListeningToChanges();
-        mAuth.signOut();
+        usersFireBaseManagement.logoutUser(mAuth.getCurrentUser());
     }
 
 
@@ -311,7 +300,17 @@ public class MainActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     Toast.makeText(getApplicationContext(), "registro exitoso", Toast.LENGTH_SHORT).show();
                                     loginUser(email, passw);
-                                    setUpUserInDatabase();
+                                    rtFireBaseManagement.setUpUserInDatabase(myUser, new UserSetupCallback() {
+                                        @Override
+                                        public void onSuccessfulTask() {
+                                            Toast.makeText(getApplicationContext(), "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onFailedTask(String errorMsg) {
+                                            Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }else{
                                     Toast.makeText(getApplicationContext(), "registro fallido", Toast.LENGTH_SHORT).show();
                                 }
@@ -368,9 +367,8 @@ public class MainActivity extends AppCompatActivity {
 
                         usrSelectBinding.selectedUser.setText(selectedUser[0].getName());
                     });
-                }
 
-                new AlertDialog.Builder(MainActivity.this).setView(usrSelectView)
+                    new AlertDialog.Builder(MainActivity.this).setView(usrSelectView)
                         .setMessage("Seleccione usuario").setPositiveButton("OK", (dialog, which) -> {
                             if(usrSelectBinding.selectedUser.getText().toString().isEmpty()) {
                                 Toast.makeText(getApplicationContext(), "Nope", Toast.LENGTH_SHORT).show();
@@ -383,6 +381,7 @@ public class MainActivity extends AppCompatActivity {
                         }).setNegativeButton("Cancelar", (dialog, which) ->{
                             dialog.dismiss();
                         }).create().show();
+                }
 
             }
 
@@ -394,108 +393,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setUpUserInDatabase(){
-        String name = mAuth.getCurrentUser().getDisplayName();
-        String email = mAuth.getCurrentUser().getEmail();
-        String idUs = mAuth.getCurrentUser().getUid();
-
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idUs);
-
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("userId", idUs);
-        userData.put("name", name);
-        userData.put("email", email);
-        userData.put("isConnected", true);
-        userData.put("isAvailable", true);
-        userData.put("lastSeen", ServerValue.TIMESTAMP);
-        userData.put("isWith", "");
-        userData.put("message", "");
-
-        userRef.setValue(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void listenToChanges(){
+        rtFireBaseManagement.listenToChanges(new ChangesListenCallback() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Usuario guardado en la base de datos", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Error al guardar usuario en la base de datos", Toast.LENGTH_SHORT).show();
+            public void onManageChanges(String sender, String message, @NonNull DataSnapshot snapshot) {
+                if(message != null && sender != null){
+                    binder.messageSent.setText(sender + " sent: " + message);
+
+                    snapshot.getRef().child("isWith").setValue("");
+                    snapshot.getRef().child("message").setValue("");
+                    snapshot.getRef().child("isAvailable").setValue(true);
                 }
             }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
         });
-    }
-
-    private void stopListeningToChanges(){
-        if(myDataListener != null && myData != null){
-            myData.removeEventListener(myDataListener);
-            myData = null;
-            myDataListener = null;
-        }
-    }
-
-    private void listenToChanges(){
-
-        stopListeningToChanges();
-
-        //estar atentos a solicitudes
-        if(mAuth.getCurrentUser() != null) {
-            myData = FirebaseDatabase.getInstance().getReference("users").child(mAuth.getCurrentUser().getUid());
-            myDataListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (!snapshot.child("isWith").getValue(String.class).isEmpty()) {
-                        String remitente = snapshot.child("isWith").getValue(String.class);
-                        DatabaseReference senderData = FirebaseDatabase.getInstance().getReference("users").child(remitente);
-
-                        senderData.child("name").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot anotherSnapshot) {
-                                String sender = anotherSnapshot.getValue(String.class);
-                                String message = snapshot.child("message").getValue(String.class);
-
-                                if(message != null && sender != null){
-                                    binder.messageSent.setText(sender + " sent: " + message);
-
-                                    snapshot.getRef().child("isWith").setValue("");
-                                    snapshot.getRef().child("message").setValue("");
-                                    snapshot.getRef().child("isAvailable").setValue(true);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            };
-            myData.addValueEventListener(myDataListener);
-        }
     }
 
     private void deleteUser(){
 
-        //borramos primero los datos del usuario en RealTime Database
         FirebaseUser userToDelete = mAuth.getCurrentUser();
-        stopListeningToChanges();
 
-        DatabaseReference dataToDelete = FirebaseDatabase.getInstance().getReference("users").child(userToDelete.getUid());
-
-        dataToDelete.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+        usersFireBaseManagement.deleteUser(userToDelete, new UserDeleteCallback() {
             @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(getApplicationContext(), "Usuario borrado de la bd", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //borramos el usuario
-        userToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
+            public void onSuccessfulRemove() {
                 Toast.makeText(getApplicationContext(), "Usuario borrado", Toast.LENGTH_SHORT).show();
             }
         });

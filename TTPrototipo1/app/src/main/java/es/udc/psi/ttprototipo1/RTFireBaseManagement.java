@@ -92,7 +92,6 @@ public class RTFireBaseManagement {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
 
         userRef.orderByChild("isConnected").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 totalUsers.clear();

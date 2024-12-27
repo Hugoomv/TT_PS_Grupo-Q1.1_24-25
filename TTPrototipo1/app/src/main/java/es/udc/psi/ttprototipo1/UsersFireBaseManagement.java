@@ -88,15 +88,15 @@ public class UsersFireBaseManagement {
             @Override
             public void onSuccessfulRemove() {
                 callback.onSuccessfulRemove();
+            }
+        });
 
-                //borramos el usuario
-                userToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
+        //borramos el usuario
+        userToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
 
-                        callback.onSuccessfulRemove();
-                    }
-                });
+                callback.onSuccessfulRemove();
             }
         });
     }

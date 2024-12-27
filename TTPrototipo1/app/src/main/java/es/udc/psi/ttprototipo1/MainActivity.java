@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(currentUser != null){
             binder.userInfo.setText(getString(R.string.stablishname) + " " + currentUser.getDisplayName() +"\n" + getString(R.string.stablishmail) + " " + currentUser.getEmail());
-            rtFireBaseManagement.updateUserConnectionStatus(mAuth.getCurrentUser(), true);
+            rtFireBaseManagement.updateUserConnectionStatus(currentUser, true);
         }else{
             Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
             binder.sendButton.setEnabled(false);
@@ -237,12 +237,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void managePetition(String message){
+        new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
+            Toast.makeText(getApplicationContext(), "peticion aceptada", Toast.LENGTH_SHORT).show();
+        })).setNegativeButton("Cancelar", ((dialog, which) -> {
+            dialog.dismiss();
+        })).create().show();
+    }
+
     private void listenToChanges(){
         rtFireBaseManagement.listenToChanges(new ChangesListenCallback() {
             @Override
             public void onManageChanges(String sender, String message) {
                 if(message != null && sender != null){
                     binder.messageSent.setText(sender + " sent: " + message);
+
+                    managePetition(sender + " sent: " + message);
                 }
             }
 

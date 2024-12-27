@@ -94,8 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSuccessfulTask() {
                         Toast.makeText(getApplicationContext(), "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
 
-                        Intent returnToSender = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(returnToSender);
                         finish();
                     }
 

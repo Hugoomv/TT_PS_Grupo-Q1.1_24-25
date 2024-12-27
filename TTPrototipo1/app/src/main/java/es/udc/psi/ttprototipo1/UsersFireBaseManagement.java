@@ -1,9 +1,6 @@
 package es.udc.psi.ttprototipo1;
 
 import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 

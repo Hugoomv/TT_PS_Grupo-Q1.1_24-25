@@ -85,12 +85,6 @@ public class RTFireBaseManagement {
 
         userRef.child("isConnected").setValue(isConnected);  // Actualizar el estado de conexión
         userRef.child("lastSeen").setValue(ServerValue.TIMESTAMP);  // Actualizar el último tiempo de conexión
-
-        // Configurar onDisconnect para manejar desconexión inesperada
-        if (isConnected) {
-            userRef.child("isConnected").onDisconnect().setValue(false);
-            userRef.child("lastSeen").onDisconnect().setValue(ServerValue.TIMESTAMP);
-        }
     }
 
     public void connectedUsers(FirebaseUser currentUser, UsersConnectedCallback callback){
@@ -157,7 +151,11 @@ public class RTFireBaseManagement {
                                 //para recepción de mensajes
                                 String sender = anotherSnapshot.getValue(String.class);
                                 String message = snapshot.child("message").getValue(String.class);
-                                callback.onManageChanges(sender, message, snapshot);
+                                callback.onManageChanges(sender, message);
+
+                                snapshot.getRef().child("isWith").setValue("");
+                                snapshot.getRef().child("message").setValue("");
+                                snapshot.getRef().child("isAvailable").setValue(true);
                             }
 
                             @Override
@@ -177,5 +175,13 @@ public class RTFireBaseManagement {
             };
             myData.addValueEventListener(myDataListener);
         }
+    }
+
+    public void sendMessage(FirebaseUser sender, User objective, String message){
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
+        DatabaseReference neoUserRef = userRef.child(objective.getUserId());
+        neoUserRef.child("isWith").setValue(sender.getUid());
+        neoUserRef.child("message").setValue(message);
+        neoUserRef.child("isAvailable").setValue(false);
     }
 }

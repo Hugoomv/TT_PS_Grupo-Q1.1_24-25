@@ -6,19 +6,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 
 import es.udc.psi.ttprototipo1.databinding.ActivityLoginBinding;
@@ -88,57 +80,68 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void registerUser(String name, String email, String password){
+        usersFireBaseManagement.registerUser(name, email, password, mAuth, new UserSetupCallback() {
+            @Override
+            public void onSuccessfulTask() {
+
+                Toast.makeText(getApplicationContext(), "registro exitoso", Toast.LENGTH_SHORT).show();
+
+                logUser(email, password);
+
+                rtFireBaseManagement.setUpUserInDatabase(mAuth.getCurrentUser(), new UserSetupCallback() {
+                    @Override
+                    public void onSuccessfulTask() {
+                        Toast.makeText(getApplicationContext(), "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
+
+                        Intent returnToSender = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(returnToSender);
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailedTask(String errorMsg) {
+                        Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailedTask(String errorMsg) {
+                Toast.makeText(getApplicationContext(), "registro fallido " + errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void logUser(String email, String password){
+        usersFireBaseManagement.loginUser(email, password, mAuth, LoginActivity.this, new UserLoginCallback() {
+            @Override
+            public void onSuccess() {
+                FirebaseUser user = mAuth.getCurrentUser();
+
+                String myName = user.getDisplayName();
+
+                Toast.makeText(getApplicationContext(), "Bienvenido, " + myName, Toast.LENGTH_SHORT).show();
+
+                Intent returnToSender = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(returnToSender);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void alertRegisterUser(){
         registerBinder = UserRegisterDialogBinding.inflate(getLayoutInflater());
         registerView = registerBinder.getRoot();
 
         AlertDialog registerDialog = new AlertDialog.Builder(LoginActivity.this).setView(registerView).setMessage(R.string.registerdialogtxt).setPositiveButton(R.string.ok, (dialog, which) ->{
-
-            usersFireBaseManagement.registerUser(registerBinder.nameSet.getText().toString(), registerBinder.emailSet.getText().toString(), registerBinder.passwSet.getText().toString(), mAuth, new UserSetupCallback() {
-                @Override
-                public void onSuccessfulTask() {
-
-                    Toast.makeText(getApplicationContext(), "registro exitoso", Toast.LENGTH_SHORT).show();
-
-                    usersFireBaseManagement.loginUser(registerBinder.emailSet.getText().toString(), registerBinder.passwSet.getText().toString(), mAuth, LoginActivity.this, new UserLoginCallback() {
-                        @Override
-                        public void onSuccess() {
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-                            String myName = user.getDisplayName();
-
-                            Toast.makeText(getApplicationContext(), "Bienvenido, " + myName, Toast.LENGTH_SHORT).show();
-
-                            rtFireBaseManagement.setUpUserInDatabase(mAuth.getCurrentUser(), new UserSetupCallback() {
-                                @Override
-                                public void onSuccessfulTask() {
-                                    Toast.makeText(getApplicationContext(), "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
-
-                                    Intent returnToSender = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(returnToSender);
-                                    finish();
-                                }
-
-                                @Override
-                                public void onFailedTask(String errorMsg) {
-                                    Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onFailure(String errorMsg) {
-                            Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                }
-
-                @Override
-                public void onFailedTask(String errorMsg) {
-                    Toast.makeText(getApplicationContext(), "registro fallido " + errorMsg, Toast.LENGTH_SHORT).show();
-                }
-            });
+            registerUser(registerBinder.nameSet.getText().toString(), registerBinder.emailSet.getText().toString(), registerBinder.passwSet.getText().toString());
         }).setNegativeButton(R.string.cancel, (dialog, which) ->{
             dialog.dismiss();
         }).create();
@@ -159,26 +162,7 @@ public class LoginActivity extends AppCompatActivity {
         loginView = loginBinder.getRoot();
 
         AlertDialog loginDialog = new AlertDialog.Builder(LoginActivity.this).setView(loginView).setMessage(R.string.logindialogtxt).setPositiveButton(R.string.ok, (dialog, which) ->{
-
-            usersFireBaseManagement.loginUser(loginBinder.emailSet.getText().toString(), loginBinder.passwSet.getText().toString(), mAuth, LoginActivity.this, new UserLoginCallback() {
-                @Override
-                public void onSuccess() {
-                    FirebaseUser user = mAuth.getCurrentUser();
-
-                    String myName = user.getDisplayName();
-
-                    Toast.makeText(getApplicationContext(), "Bienvenido, " + myName, Toast.LENGTH_SHORT).show();
-
-                    Intent returnToSender = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(returnToSender);
-                    finish();
-                }
-
-                @Override
-                public void onFailure(String errorMsg) {
-                    Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
-                }
-            });
+            logUser(loginBinder.emailSet.getText().toString(), loginBinder.passwSet.getText().toString());
         }).setNegativeButton(R.string.cancel, (dialog, which) ->{
             dialog.dismiss();
         }).create();

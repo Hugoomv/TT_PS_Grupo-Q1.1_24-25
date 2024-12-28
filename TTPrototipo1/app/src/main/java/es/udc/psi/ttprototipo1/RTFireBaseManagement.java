@@ -1,6 +1,5 @@
 package es.udc.psi.ttprototipo1;
 
-import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 
@@ -143,17 +142,18 @@ public class RTFireBaseManagement {
                     if (!snapshot.child("isWith").getValue(String.class).isEmpty()) {
                         String remitente = snapshot.child("isWith").getValue(String.class);
                         DatabaseReference senderData = FirebaseDatabase.getInstance().getReference("users").child(remitente);
+                        String message = snapshot.child("message").getValue(String.class);
 
                         senderData.child("name").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot anotherSnapshot) {
                                 //para recepción de mensajes
                                 String sender = anotherSnapshot.getValue(String.class);
-                                String message = snapshot.child("message").getValue(String.class);
-                                callback.onManageChanges(sender, message);
 
-                                snapshot.getRef().child("isWith").setValue("");
+                                callback.onManageChanges(sender, remitente, message);
+
                                 snapshot.getRef().child("message").setValue("");
+                                snapshot.getRef().child("isWith").setValue("");
                                 snapshot.getRef().child("isAvailable").setValue(true);
                             }
 
@@ -176,11 +176,61 @@ public class RTFireBaseManagement {
         }
     }
 
-    public void sendMessage(FirebaseUser sender, User objective, String message){
+    public void sendMessage(FirebaseUser sender, String userId, String message){
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference neoUserRef = userRef.child(objective.getUserId());
+        DatabaseReference neoUserRef = userRef.child(userId);
         neoUserRef.child("isWith").setValue(sender.getUid());
-        neoUserRef.child("message").setValue(message);
         neoUserRef.child("isAvailable").setValue(false);
+        neoUserRef.child("message").setValue(message);
+    }
+
+    public void createMatch(String idUs1, String idUs2, MatchCreationCallback callback){
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("matches").child(idUs1+idUs2);
+
+        Map<String, Object> player1Data = new HashMap<>();
+        player1Data.put("id", idUs1);
+        player1Data.put("score", 0);
+        player1Data.put("role", "bottom");
+
+        Map<String, Object> player2Data = new HashMap<>();
+        player1Data.put("id", idUs2);
+        player1Data.put("score", 0);
+        player1Data.put("role", "top");
+
+        Map<String, Object> diskData = new HashMap<>();
+        diskData.put("x", 540);
+        diskData.put("y", 1700);
+        diskData.put("vx", 0);
+        diskData.put("vy", 0);
+
+        Map<String, Object> matchData = new HashMap<>();
+        matchData.put("player1", player1Data);
+        matchData.put("player2", player2Data);
+        matchData.put("diskOwner", player1Data);
+        matchData.put("status", "inProgress");
+        matchData.put("lastSeen", ServerValue.TIMESTAMP);
+
+        userRef.setValue(matchData).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFail(task.getException().getMessage());
+                }
+            }
+        });
+    }
+
+    public void deleteMatch(String idUs1, String idUs2, MatchDeleteCallback callback){
+        DatabaseReference dataToDelete = FirebaseDatabase.getInstance().getReference("matches").child(idUs1+idUs2);
+
+        dataToDelete.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                //Toast.makeText(contexto, "Usuario borrado de la bd", Toast.LENGTH_SHORT).show();
+                callback.onSuccessfulRemove();
+            }
+        });
     }
 }

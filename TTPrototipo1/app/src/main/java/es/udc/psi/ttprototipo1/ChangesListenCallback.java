@@ -5,6 +5,6 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
 
 public interface ChangesListenCallback{
-    public void onManageChanges(String sender, String message);
-    public void onError(String message);
+    void onManageChanges(String sender, String senderId, String message);
+    void onError(String message);
 }

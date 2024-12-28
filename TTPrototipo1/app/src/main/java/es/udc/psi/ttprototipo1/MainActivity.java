@@ -129,11 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (v.getId() == binder.sendButton.getId()) {
 
                     //alertdialog para mandar mensaje en el edittext
-                    if (!binder.messageToSend.getText().toString().trim().isEmpty()) {
-                        sendButtonAlert();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No message", Toast.LENGTH_SHORT).show();
-                    }
+                    sendButtonAlert();
 
                 } else if (v.getId() == binder.deleteUserButton.getId()) {
                     //delete user
@@ -182,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser != null) {
             rtFireBaseManagement.updateUserConnectionStatus(currentUser, false);
         }
+        rtFireBaseManagement.stopListeningToChanges();
         super.onStop();
     }
 
@@ -221,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Nope", Toast.LENGTH_SHORT).show();
                             }else{
 
-                                rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), selectedUser[0], binder.messageToSend.getText().toString());
+                                rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), selectedUser[0].getUserId(), "invite");
                             }
                         }).setNegativeButton("Cancelar", (dialog, which) ->{
                             dialog.dismiss();
@@ -237,22 +234,29 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void managePetition(String message){
+    private void managePetition(String senderId, String message){
         new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
             Toast.makeText(getApplicationContext(), "peticion aceptada", Toast.LENGTH_SHORT).show();
+            rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "accept");
         })).setNegativeButton("Cancelar", ((dialog, which) -> {
-            dialog.dismiss();
+            rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "deny");
         })).create().show();
     }
 
     private void listenToChanges(){
         rtFireBaseManagement.listenToChanges(new ChangesListenCallback() {
             @Override
-            public void onManageChanges(String sender, String message) {
+            public void onManageChanges(String sender, String senderId, String message) {
                 if(message != null && sender != null){
-                    binder.messageSent.setText(sender + " sent: " + message);
 
-                    managePetition(sender + " sent: " + message);
+                    if(message.equals("invite")){
+                        managePetition(senderId, sender + " sent " + message);
+                    }if(message.equals("accept")){
+                        Toast.makeText(getApplicationContext(), "invite was accepted", Toast.LENGTH_LONG).show();
+                    }else if(message.equals("deny")){
+                        Toast.makeText(getApplicationContext(), "invite was rejected", Toast.LENGTH_LONG).show();
+                    }
+
                 }
             }
 

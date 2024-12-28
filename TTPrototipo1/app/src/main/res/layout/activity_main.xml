@@ -22,26 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
-        <TextView
-            android:id="@+id/message_sent"
-            android:textSize="30sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/defaulttext" />
-
         <Button
             android:id="@+id/startGameButton"
             style="@style/ButtonStyle"
             android:text="@string/iniciar_juego_inicio" />
-
-        <EditText
-            android:id="@+id/message_to_send"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="@string/introduzca_el_mensaje_a_enviar_et"
-            android:minHeight="48dp"
-            android:hint="@string/introduzca_el_mensaje_a_enviar_et"
-            android:inputType="text" />
 
         <Button
             style="@style/ButtonStyle"

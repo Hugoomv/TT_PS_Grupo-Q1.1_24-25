@@ -1,6 +1,8 @@
 package es.udc.psi.ttprototipo1;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -193,9 +195,9 @@ public class RTFireBaseManagement {
         player1Data.put("role", "bottom");
 
         Map<String, Object> player2Data = new HashMap<>();
-        player1Data.put("id", idUs2);
-        player1Data.put("score", 0);
-        player1Data.put("role", "top");
+        player2Data.put("id", idUs2);
+        player2Data.put("score", 0);
+        player2Data.put("role", "top");
 
         Map<String, Object> diskData = new HashMap<>();
         diskData.put("x", 540);
@@ -206,7 +208,8 @@ public class RTFireBaseManagement {
         Map<String, Object> matchData = new HashMap<>();
         matchData.put("player1", player1Data);
         matchData.put("player2", player2Data);
-        matchData.put("diskOwner", player1Data);
+        matchData.put("disk", diskData);
+        matchData.put("diskOwner", "player1");
         matchData.put("status", "inProgress");
         matchData.put("lastSeen", ServerValue.TIMESTAMP);
 
@@ -230,6 +233,50 @@ public class RTFireBaseManagement {
             public void onSuccess(Void unused) {
                 //Toast.makeText(contexto, "Usuario borrado de la bd", Toast.LENGTH_SHORT).show();
                 callback.onSuccessfulRemove();
+            }
+        });
+    }
+
+    public void changeBall(String partidaId, int x, int y, int vx, int vy){
+        DatabaseReference matchRef = FirebaseDatabase.getInstance().getReference("matches").child(partidaId);
+        matchRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String oldOwner = snapshot.child("diskOwner").getValue(String.class);
+                if(oldOwner.equals("player1")){
+                    matchRef.child("diskOwner").setValue("player2");
+                }else if(oldOwner.equals("player2")){
+                    matchRef.child("diskOwner").setValue("player1");
+                }
+
+                matchRef.child("disk").child("x").setValue(x);
+                matchRef.child("disk").child("y").setValue(y);
+                matchRef.child("disk").child("vx").setValue(vx);
+                matchRef.child("disk").child("vy").setValue(vy);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("Error", "no se pudo cambiar la pelota");
+            }
+        });
+    }
+
+    public void updateScore(String playerId, String partidaId, int score){
+        DatabaseReference matchRef = FirebaseDatabase.getInstance().getReference("matches").child(partidaId);
+        matchRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("player1").child("id").getValue(String.class).equals(playerId)){
+                    matchRef.child("player1").child("score").setValue(score);
+                }else{
+                    matchRef.child("player2").child("score").setValue(score);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("Error", "no se pudo actualizar la puntuacion");
             }
         });
     }

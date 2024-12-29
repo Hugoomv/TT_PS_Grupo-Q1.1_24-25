@@ -237,7 +237,15 @@ public class MainActivity extends AppCompatActivity {
     private void managePetition(String senderId, String message){
         new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
             Toast.makeText(getApplicationContext(), "peticion aceptada", Toast.LENGTH_SHORT).show();
+
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "accept");
+
+            String newMatchId = senderId+mAuth.getCurrentUser().getUid();
+            Intent matchAct = new Intent(MainActivity.this, GameActivity.class);
+            matchAct.putExtra(Intent.EXTRA_TEXT, newMatchId);
+            matchAct.putExtra("isBottomPlayer", false); // Cambia a false si es top
+            matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(matchAct);
         })).setNegativeButton("Cancelar", ((dialog, which) -> {
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "deny");
         })).create().show();
@@ -253,6 +261,22 @@ public class MainActivity extends AppCompatActivity {
                         managePetition(senderId, sender + " sent " + message);
                     }if(message.equals("accept")){
                         Toast.makeText(getApplicationContext(), "invite was accepted", Toast.LENGTH_LONG).show();
+                        String newMatchId = mAuth.getCurrentUser().getUid()+senderId;
+                        rtFireBaseManagement.createMatch(mAuth.getCurrentUser().getUid(), senderId, new MatchCreationCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Intent matchAct = new Intent(MainActivity.this, GameActivity.class);
+                                matchAct.putExtra(Intent.EXTRA_TEXT, newMatchId);
+                                matchAct.putExtra("isBottomPlayer", true); // Cambia a false si es top
+                                matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(matchAct);
+                            }
+
+                            @Override
+                            public void onFail(String errorMsg) {
+                                Toast.makeText(getApplicationContext(), "Error while creating match", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }else if(message.equals("deny")){
                         Toast.makeText(getApplicationContext(), "invite was rejected", Toast.LENGTH_LONG).show();
                     }

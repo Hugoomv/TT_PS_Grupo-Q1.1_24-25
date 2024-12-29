@@ -1,5 +1,6 @@
 package es.udc.psi.ttprototipo1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -11,6 +12,8 @@ import es.udc.psi.ttprototipo1.databinding.GameActivityBinding;
 public class GameActivity extends AppCompatActivity {
 
     private GameActivityBinding binder;
+
+    private String matchId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,11 @@ public class GameActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Habilitar el botón de retroceso
             getSupportActionBar().setDisplayShowHomeEnabled(true); // Mostrar la flecha de retroceso
         }
+
+        Intent receibedIntent = getIntent();
+
+        String matchId = receibedIntent.getStringExtra(Intent.EXTRA_TEXT);
+
         // Obtener el valor de "isBottomPlayer" del Intent
         boolean isBottomPlayer = getIntent().getBooleanExtra("isBottomPlayer", true);
 

@@ -3,6 +3,8 @@ package es.udc.psi.ttprototipo1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,6 +16,9 @@ public class GameActivity extends AppCompatActivity {
     private GameActivityBinding binder;
 
     private String matchId;
+    private boolean isBottomPlayer;
+
+    private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +39,30 @@ public class GameActivity extends AppCompatActivity {
 
         Intent receibedIntent = getIntent();
 
-        String matchId = receibedIntent.getStringExtra(Intent.EXTRA_TEXT);
+        this.matchId = receibedIntent.getStringExtra(Intent.EXTRA_TEXT);
 
         // Obtener el valor de "isBottomPlayer" del Intent
-        boolean isBottomPlayer = getIntent().getBooleanExtra("isBottomPlayer", true);
+        isBottomPlayer = getIntent().getBooleanExtra("isBottomPlayer", true);
 
         //añadir al intent el valor de isbottonplayer al crear la partida
         // Crear una instancia de GameView y añadirla al contenedor
-        GameView gameView = new GameView(this, isBottomPlayer); // true para jugador inferior
+        GameView gameView = new GameView(this, this.matchId, isBottomPlayer); // true para jugador inferior
         binder.gameViewContainer.addView(gameView);
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        rtFireBaseManagement.stopDetectingDiskChanges();
+        if(isBottomPlayer){
+            rtFireBaseManagement.deleteMatch(this.matchId, new MatchDeleteCallback() {
+                @Override
+                public void onSuccessfulRemove() {
+                    Toast.makeText(getApplicationContext(), "terminando partida...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        super.onBackPressed();
     }
 
     // Manejar el clic en el botón de retroceso
@@ -58,8 +77,19 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         binder.gameViewContainer.removeAllViews(); // Limpia las vistas del contenedor
+
+        rtFireBaseManagement.stopDetectingDiskChanges();
+        if(isBottomPlayer){
+            rtFireBaseManagement.deleteMatch(this.matchId, new MatchDeleteCallback() {
+                @Override
+                public void onSuccessfulRemove() {
+                    Toast.makeText(getApplicationContext(), "terminando partida...", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        super.onDestroy();
     }
 
 }

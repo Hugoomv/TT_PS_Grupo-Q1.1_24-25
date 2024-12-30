@@ -47,12 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binder;
     private View myView;
 
-    private UserLoginDialogBinding loginBinder;
-    private View loginView;
-
-    private UserRegisterDialogBinding registerBinder;
-    private View registerView;
-
     private FirebaseAuth mAuth;
 
     private UIHelper uiHelper;
@@ -236,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void managePetition(String senderId, String message){
         new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
-            Toast.makeText(getApplicationContext(), "peticion aceptada", Toast.LENGTH_SHORT).show();
 
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "accept");
 
@@ -246,7 +239,9 @@ public class MainActivity extends AppCompatActivity {
             matchAct.putExtra("isBottomPlayer", false); // Cambia a false si es top
             matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(matchAct);
+
         })).setNegativeButton("Cancelar", ((dialog, which) -> {
+            Toast.makeText(getApplicationContext(), "Invite rejected", Toast.LENGTH_SHORT).show();
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "deny");
         })).create().show();
     }
@@ -260,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
                     if(message.equals("invite")){
                         managePetition(senderId, sender + " sent " + message);
                     }if(message.equals("accept")){
-                        Toast.makeText(getApplicationContext(), "invite was accepted", Toast.LENGTH_LONG).show();
                         String newMatchId = mAuth.getCurrentUser().getUid()+senderId;
                         rtFireBaseManagement.createMatch(mAuth.getCurrentUser().getUid(), senderId, new MatchCreationCallback() {
                             @Override

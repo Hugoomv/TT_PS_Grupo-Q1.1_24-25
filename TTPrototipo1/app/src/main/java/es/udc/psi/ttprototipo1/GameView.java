@@ -18,6 +18,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private long previousTime;
     private Disk disk;
 
+    private String matchId;
     private float x, y, radius; // Posición y tamaño del disco
     private Paint paint2;        // Pintura para dibujar
     private RectF playerPaddle; // Pala del jugador
@@ -32,9 +33,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 
 
-    public GameView(Context context, boolean isBottomPlayer) {
+    public GameView(Context context, String matchId, boolean isBottomPlayer) {
         super(context);
         this.isBottomPlayer = isBottomPlayer;
+        this.matchId = matchId;
         getHolder().addCallback(this);
         paint = new Paint();
         disk = new Disk(200, 200, 50); // Inicializa el disco
@@ -46,7 +48,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
     }
 
-
+    public void stopGame() {
+        isPlaying = false;
+        try {
+            if (gameThread != null) {
+                gameThread.join(); // Detén el hilo
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -55,24 +66,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         gameThread = new Thread(this);
         gameThread.start();
 
-        // Configura la pala según el rol
-        if (isBottomPlayer) {
-            // Pala del jugador en la parte inferior
-            playerPaddle = new RectF(
-                getWidth() / 2 - paddleWidth / 2,
-                getHeight() - 100,
-                getWidth() / 2 + paddleWidth / 2,
-                getHeight() - 70
-            );
-        } else {
-            // Pala del jugador en la parte superior
-            playerPaddle = new RectF(
-                getWidth() / 2 - paddleWidth / 2,
-                100,
-                getWidth() / 2 + paddleWidth / 2,
-                130
-            );
-        }
+        // Pala del jugador en la parte inferior
+        playerPaddle = new RectF(
+            getWidth() / 2 - paddleWidth / 2,
+            getHeight() - 100,
+            getWidth() / 2 + paddleWidth / 2,
+            getHeight() - 70
+        );
     }
 
 
@@ -119,18 +119,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private void draw() {
         if (getHolder().getSurface().isValid()) {
             Canvas canvas = getHolder().lockCanvas();
-            canvas.drawColor(Color.BLACK);
 
-            // Dibuja el disco solo si está visible
-            if (isDiskVisible) {
-                disk.draw(canvas, paint);
+            if(canvas != null){
+                canvas.drawColor(Color.BLACK);
+                // Dibuja el disco solo si está visible
+                if (isDiskVisible) {
+                    disk.draw(canvas, paint);
+                }
+
+                // Dibuja la pala del jugador
+                paint.setColor(Color.WHITE);
+                canvas.drawRect(playerPaddle, paint);
+
+                getHolder().unlockCanvasAndPost(canvas);
+
             }
 
-            // Dibuja la pala del jugador
-            paint.setColor(Color.WHITE);
-            canvas.drawRect(playerPaddle, paint);
-
-            getHolder().unlockCanvasAndPost(canvas);
         }
     }
     @Override
@@ -168,6 +172,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // Libera recursos como hilos, timers, etc.
+        stopGame();
     }
 
 }

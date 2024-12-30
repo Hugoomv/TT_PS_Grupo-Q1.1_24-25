@@ -26,6 +26,9 @@ public class RTFireBaseManagement {
     private DatabaseReference myData;
     private ValueEventListener myDataListener;
 
+    private DatabaseReference myMatchData;
+    private ValueEventListener myMatchDataListener;
+
     private static RTFireBaseManagement instance;
 
     private RTFireBaseManagement() {}
@@ -200,8 +203,8 @@ public class RTFireBaseManagement {
         player2Data.put("role", "top");
 
         Map<String, Object> diskData = new HashMap<>();
-        diskData.put("x", 540);
-        diskData.put("y", 1700);
+        diskData.put("x", 200);
+        diskData.put("y", 200);
         diskData.put("vx", 0);
         diskData.put("vy", 0);
 
@@ -211,7 +214,6 @@ public class RTFireBaseManagement {
         matchData.put("disk", diskData);
         matchData.put("diskOwner", "player1");
         matchData.put("status", "inProgress");
-        matchData.put("lastSeen", ServerValue.TIMESTAMP);
 
         userRef.setValue(matchData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -225,8 +227,13 @@ public class RTFireBaseManagement {
         });
     }
 
-    public void deleteMatch(String idUs1, String idUs2, MatchDeleteCallback callback){
-        DatabaseReference dataToDelete = FirebaseDatabase.getInstance().getReference("matches").child(idUs1+idUs2);
+    public void deleteMatch(String matchId, MatchDeleteCallback callback){
+
+        if (matchId == null || matchId.isEmpty()) {
+            return;
+        }
+
+        DatabaseReference dataToDelete = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
 
         dataToDelete.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -237,22 +244,23 @@ public class RTFireBaseManagement {
         });
     }
 
-    public void changeBall(String partidaId, int x, int y, int vx, int vy){
+    public void changeDisk(String partidaId, int x, int y, int vx, int vy){
         DatabaseReference matchRef = FirebaseDatabase.getInstance().getReference("matches").child(partidaId);
         matchRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                matchRef.child("disk").child("x").setValue(x);
+                matchRef.child("disk").child("y").setValue(y);
+                matchRef.child("disk").child("vx").setValue(vx);
+                matchRef.child("disk").child("vy").setValue(vy);
+
                 String oldOwner = snapshot.child("diskOwner").getValue(String.class);
                 if(oldOwner.equals("player1")){
                     matchRef.child("diskOwner").setValue("player2");
                 }else if(oldOwner.equals("player2")){
                     matchRef.child("diskOwner").setValue("player1");
                 }
-
-                matchRef.child("disk").child("x").setValue(x);
-                matchRef.child("disk").child("y").setValue(y);
-                matchRef.child("disk").child("vx").setValue(vx);
-                matchRef.child("disk").child("vy").setValue(vy);
             }
 
             @Override
@@ -279,5 +287,57 @@ public class RTFireBaseManagement {
                 Log.d("Error", "no se pudo actualizar la puntuacion");
             }
         });
+    }
+
+    public void detectDiskChanges(String playerId, String partidaId, DiskChangeDetectionCallback callback){
+        /*Añadimos listener para quien tiene la bola
+        * devolvemos con un callback las coordenadas del disco*/
+        myMatchData = FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("diskOwner");
+        myMatchDataListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DatabaseReference matchRef = FirebaseDatabase.getInstance().getReference("matches").child(partidaId);
+                matchRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int x = snapshot.child("disk").child("x").getValue(Integer.class);
+                        int y = snapshot.child("disk").child("y").getValue(Integer.class);
+                        int vx = snapshot.child("disk").child("vx").getValue(Integer.class);
+                        int vy = snapshot.child("disk").child("vy").getValue(Integer.class);
+
+                        String newOwner = snapshot.child("diskOwner").getValue(String.class);
+                        String newOwnerId = snapshot.child(newOwner).child("id").getValue(String.class);
+
+                        if(newOwnerId.equals(playerId)){
+                            callback.onCangeDetected(x, y, vx, vy);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onFail(error.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFail(error.getMessage());
+            }
+        };
+    }
+
+    public void stopDetectingDiskChanges(){
+        //Borramos el listener
+        if(myMatchData != null && myMatchDataListener != null){
+            myMatchData.removeEventListener(myMatchDataListener);
+            myMatchData = null;
+            myMatchDataListener = null;
+        }
+    }
+
+    public void determineWinner(String partidaId){
+        //
     }
 }

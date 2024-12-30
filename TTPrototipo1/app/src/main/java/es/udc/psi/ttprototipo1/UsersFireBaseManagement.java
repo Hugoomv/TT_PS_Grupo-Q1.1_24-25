@@ -1,10 +1,12 @@
 package es.udc.psi.ttprototipo1;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -80,9 +82,10 @@ public class UsersFireBaseManagement {
 
     public void deleteUser(FirebaseUser userToDelete, UserDeleteCallback callback){
 
-        //primero cerramos sesión y borramos los datos del usuario en RealTime Database
+        //borramos los datos del usuario en RealTime Database
 
-        logoutUser(userToDelete);
+        rtFireBaseManagement.updateUserConnectionStatus(userToDelete, false);
+        rtFireBaseManagement.stopListeningToChanges();
 
         rtFireBaseManagement.deleteUserInDatabase(userToDelete, new UserDeleteCallback() {
             @Override
@@ -93,6 +96,11 @@ public class UsersFireBaseManagement {
                     public void onSuccess(Void unused) {
 
                         callback.onSuccessfulRemove();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Error", e.getMessage());
                     }
                 });
             }

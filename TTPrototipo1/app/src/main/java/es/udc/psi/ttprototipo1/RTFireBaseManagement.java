@@ -214,6 +214,7 @@ public class RTFireBaseManagement {
         matchData.put("disk", diskData);
         matchData.put("diskOwner", "player1");
         matchData.put("status", "inProgress");
+        matchData.put("winner", "");
 
         userRef.setValue(matchData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -238,7 +239,6 @@ public class RTFireBaseManagement {
         dataToDelete.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                //Toast.makeText(contexto, "Usuario borrado de la bd", Toast.LENGTH_SHORT).show();
                 callback.onSuccessfulRemove();
             }
         });

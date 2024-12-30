@@ -87,16 +87,14 @@ public class UsersFireBaseManagement {
         rtFireBaseManagement.deleteUserInDatabase(userToDelete, new UserDeleteCallback() {
             @Override
             public void onSuccessfulRemove() {
-                callback.onSuccessfulRemove();
-            }
-        });
+                //borramos el usuario
+                userToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
 
-        //borramos el usuario
-        userToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-
-                callback.onSuccessfulRemove();
+                        callback.onSuccessfulRemove();
+                    }
+                });
             }
         });
     }

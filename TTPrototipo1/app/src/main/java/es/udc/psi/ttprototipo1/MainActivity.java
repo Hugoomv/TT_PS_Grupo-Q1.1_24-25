@@ -155,9 +155,9 @@ public class MainActivity extends AppCompatActivity {
             rtFireBaseManagement.updateUserConnectionStatus(currentUser, true);
         }else{
             Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
-            binder.sendButton.setEnabled(false);
 
             Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
+            goLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goLogin);
             finish();
         }
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void managePetition(String senderId, String message){
-        new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
+        AlertDialog invite = new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
 
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "accept");
 
@@ -243,7 +243,9 @@ public class MainActivity extends AppCompatActivity {
         })).setNegativeButton("Cancelar", ((dialog, which) -> {
             Toast.makeText(getApplicationContext(), "Invite rejected", Toast.LENGTH_SHORT).show();
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "deny");
-        })).create().show();
+        })).setCancelable(false).create();
+
+        invite.show();
     }
 
     private void listenToChanges(){

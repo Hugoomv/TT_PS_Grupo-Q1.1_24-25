@@ -51,20 +51,6 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed(){
-        rtFireBaseManagement.stopDetectingDiskChanges();
-        if(isBottomPlayer){
-            rtFireBaseManagement.deleteMatch(this.matchId, new MatchDeleteCallback() {
-                @Override
-                public void onSuccessfulRemove() {
-                    Toast.makeText(getApplicationContext(), "terminando partida...", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        super.onBackPressed();
-    }
-
     // Manejar el clic en el botón de retroceso
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -203,10 +203,10 @@ public class RTFireBaseManagement {
         player2Data.put("role", "top");
 
         Map<String, Object> diskData = new HashMap<>();
-        diskData.put("x", 200);
-        diskData.put("y", 200);
-        diskData.put("vx", 0);
-        diskData.put("vy", 0);
+        diskData.put("x", 200.0);
+        diskData.put("y", 200.0);
+        diskData.put("vx", 5.0);
+        diskData.put("vy", 5.0);
 
         Map<String, Object> matchData = new HashMap<>();
         matchData.put("player1", player1Data);
@@ -244,7 +244,7 @@ public class RTFireBaseManagement {
         });
     }
 
-    public void changeDisk(String partidaId, int x, int y, int vx, int vy){
+    public void changeDisk(String partidaId, float x, float y, float vx, float vy){
         DatabaseReference matchRef = FirebaseDatabase.getInstance().getReference("matches").child(partidaId);
         matchRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -300,10 +300,10 @@ public class RTFireBaseManagement {
                 matchRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        int x = snapshot.child("disk").child("x").getValue(Integer.class);
-                        int y = snapshot.child("disk").child("y").getValue(Integer.class);
-                        int vx = snapshot.child("disk").child("vx").getValue(Integer.class);
-                        int vy = snapshot.child("disk").child("vy").getValue(Integer.class);
+                        float x = snapshot.child("disk").child("x").getValue(Float.class);
+                        float y = snapshot.child("disk").child("y").getValue(Float.class);
+                        float vx = snapshot.child("disk").child("vx").getValue(Float.class);
+                        float vy = snapshot.child("disk").child("vy").getValue(Float.class);
 
                         String newOwner = snapshot.child("diskOwner").getValue(String.class);
                         String newOwnerId = snapshot.child(newOwner).child("id").getValue(String.class);
@@ -326,6 +326,7 @@ public class RTFireBaseManagement {
                 callback.onFail(error.getMessage());
             }
         };
+        myMatchData.addValueEventListener(myMatchDataListener);
     }
 
     public void stopDetectingDiskChanges(){

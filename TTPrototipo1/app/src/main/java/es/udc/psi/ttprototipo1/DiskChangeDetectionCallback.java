@@ -1,6 +1,6 @@
 package es.udc.psi.ttprototipo1;
 
 public interface DiskChangeDetectionCallback {
-    void onCangeDetected(int x, int y, int vx, int vy);
+    void onCangeDetected(float x, float y, float vx, float vy);
     void onFail(String errorMsg);
 }

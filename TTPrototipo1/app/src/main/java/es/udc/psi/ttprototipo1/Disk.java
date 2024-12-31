@@ -23,6 +23,22 @@ public class Disk {
         return (float) Math.toDegrees(Math.atan2(vy, vx));
     }
 
+    public float getX(){
+        return this.x;
+    }
+
+    public float getY(){
+        return this.y;
+    }
+
+    public float getVx(){
+        return this.vx;
+    }
+
+    public float getVY(){
+        return this.vy;
+    }
+
     public boolean update(long deltaTime, RectF playerPaddle, boolean isBottomPlayer, OnDiskExitListener listener) {
         // Actualiza la posición del disco
         x += vx * deltaTime / 16;

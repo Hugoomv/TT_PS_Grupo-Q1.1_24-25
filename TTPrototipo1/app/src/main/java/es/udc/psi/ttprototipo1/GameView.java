@@ -4,11 +4,14 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Canvas;
 import androidx.annotation.NonNull;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable,OnDiskExitListener  {
     private Thread gameThread;
@@ -19,6 +22,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private Disk disk;
 
     private String matchId;
+    private String playerId;
+    private FirebaseAuth mAuth;
     private float x, y, radius; // Posición y tamaño del disco
     private Paint paint2;        // Pintura para dibujar
     private RectF playerPaddle; // Pala del jugador
@@ -28,7 +33,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private boolean isBottomPlayer; // Indica si el jugador está en la posición inferior
     private boolean isDiskVisible;
 
-
+    private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
 
 
 
@@ -45,6 +50,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         }else{
             isDiskVisible = false;
         }
+        mAuth = FirebaseAuth.getInstance();
+        playerId = mAuth.getCurrentUser().getUid();
+        rtFireBaseManagement.detectDiskChanges(playerId, matchId, new DiskChangeDetectionCallback() {
+            @Override
+            public void onCangeDetected(float x, float y, float vx, float vy) {
+                receiveDisk(x, y, (float)-1.0*vx, (float)-1.0*vy);
+            }
+
+            @Override
+            public void onFail(String errorMsg) {
+                stopGame();
+            }
+        });
 
     }
 
@@ -155,6 +173,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     public void onDiskExit(float x, float y, float angle, String sender) {
         // Manejar la salida del disco
         isDiskVisible = false;
+        rtFireBaseManagement.changeDisk(matchId, disk.getX(), disk.getY(), disk.getVx(), disk.getVY());
 
         // Aquí puedes enviar los datos a Firebase para que el otro jugador lo reciba
         System.out.println("Disco enviado: posición=(" + x + ", " + y + "), ángulo=" + angle + ", enviado por=" + sender);

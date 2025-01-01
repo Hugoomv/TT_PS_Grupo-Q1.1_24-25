@@ -1,6 +1,5 @@
 package es.udc.psi.ttprototipo1;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +9,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -19,24 +17,13 @@ import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import es.udc.psi.ttprototipo1.UserInterface.UIHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
-import es.udc.psi.ttprototipo1.databinding.UserLoginDialogBinding;
-import es.udc.psi.ttprototipo1.databinding.UserRegisterDialogBinding;
 import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -165,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onPause(){
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -173,7 +160,8 @@ public class MainActivity extends AppCompatActivity {
             rtFireBaseManagement.updateUserConnectionStatus(currentUser, false);
         }
         rtFireBaseManagement.stopListeningToChanges();
-        super.onStop();
+
+        super.onPause();
     }
 
     private void logoutUser(){
@@ -212,7 +200,18 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Nope", Toast.LENGTH_SHORT).show();
                             }else{
 
-                                rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), selectedUser[0].getUserId(), "invite");
+                                String newMatchId = mAuth.getCurrentUser().getUid()+selectedUser[0].getUserId();
+                                rtFireBaseManagement.createMatch(mAuth.getCurrentUser().getUid(), selectedUser[0].getUserId(), new MatchCreationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), selectedUser[0].getUserId(), "invite");
+                                    }
+
+                                    @Override
+                                    public void onFail(String errorMsg) {
+                                        Toast.makeText(getApplicationContext(), "Error while creating match", Toast.LENGTH_LONG).show();
+                                    }
+                                });
                             }
                         }).setNegativeButton("Cancelar", (dialog, which) ->{
                             dialog.dismiss();
@@ -258,21 +257,11 @@ public class MainActivity extends AppCompatActivity {
                         managePetition(senderId, sender + " sent " + message);
                     }if(message.equals("accept")){
                         String newMatchId = mAuth.getCurrentUser().getUid()+senderId;
-                        rtFireBaseManagement.createMatch(mAuth.getCurrentUser().getUid(), senderId, new MatchCreationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Intent matchAct = new Intent(MainActivity.this, GameActivity.class);
-                                matchAct.putExtra(Intent.EXTRA_TEXT, newMatchId);
-                                matchAct.putExtra("isBottomPlayer", true); // Cambia a false si es top
-                                matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(matchAct);
-                            }
-
-                            @Override
-                            public void onFail(String errorMsg) {
-                                Toast.makeText(getApplicationContext(), "Error while creating match", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                        Intent matchAct = new Intent(MainActivity.this, GameActivity.class);
+                        matchAct.putExtra(Intent.EXTRA_TEXT, newMatchId);
+                        matchAct.putExtra("isBottomPlayer", true); // Cambia a false si es top
+                        matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(matchAct);
                     }else if(message.equals("deny")){
                         Toast.makeText(getApplicationContext(), "invite was rejected", Toast.LENGTH_LONG).show();
                     }
@@ -299,6 +288,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(goLogin);
                 finish();
+            }
+
+            @Override
+            public void onFailedRemove() {
+                Toast.makeText(getApplicationContext(), "vuelve a iniciar sesión para poder borrar la cuenta", Toast.LENGTH_SHORT).show();
+                logoutUser();
             }
         });
     }

@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -194,19 +195,19 @@ public class RTFireBaseManagement {
 
         Map<String, Object> player1Data = new HashMap<>();
         player1Data.put("id", idUs1);
-        player1Data.put("score", 0);
+        player1Data.put("score", 5);
         player1Data.put("role", "bottom");
 
         Map<String, Object> player2Data = new HashMap<>();
         player2Data.put("id", idUs2);
-        player2Data.put("score", 0);
+        player2Data.put("score", 5);
         player2Data.put("role", "top");
 
         Map<String, Object> diskData = new HashMap<>();
         diskData.put("x", 200.0);
         diskData.put("y", 200.0);
         diskData.put("vx", 5.0);
-        diskData.put("vy", 5.0);
+        diskData.put("vy", -5.0);
 
         Map<String, Object> matchData = new HashMap<>();
         matchData.put("player1", player1Data);
@@ -240,6 +241,11 @@ public class RTFireBaseManagement {
             @Override
             public void onSuccess(Void unused) {
                 callback.onSuccessfulRemove();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Error", e.getMessage());
             }
         });
     }

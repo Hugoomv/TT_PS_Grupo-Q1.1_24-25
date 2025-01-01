@@ -33,6 +33,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private boolean isBottomPlayer; // Indica si el jugador está en la posición inferior
     private boolean isDiskVisible;
 
+    private int score = 5;
+
     private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
 
 
@@ -55,7 +57,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         rtFireBaseManagement.detectDiskChanges(playerId, matchId, new DiskChangeDetectionCallback() {
             @Override
             public void onCangeDetected(float x, float y, float vx, float vy) {
-                receiveDisk(x, y, (float)-1.0*vx, (float)-1.0*vy);
+                receiveDisk(x, y, vx, (float)-1.0*vy);
             }
 
             @Override
@@ -173,7 +175,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     public void onDiskExit(float x, float y, float angle, String sender) {
         // Manejar la salida del disco
         isDiskVisible = false;
+
         rtFireBaseManagement.changeDisk(matchId, disk.getX(), disk.getY(), disk.getVx(), disk.getVY());
+
+        /*esto para la puntuación
+        score--;
+        rtFireBaseManagement.updateScore(playerId, matchId, score);
+        receiveDisk(getWidth() / 2f, getHeight() / 2f, 0, -1);*/
 
         // Aquí puedes enviar los datos a Firebase para que el otro jugador lo reciba
         System.out.println("Disco enviado: posición=(" + x + ", " + y + "), ángulo=" + angle + ", enviado por=" + sender);

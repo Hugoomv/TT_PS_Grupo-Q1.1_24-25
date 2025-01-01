@@ -82,27 +82,32 @@ public class UsersFireBaseManagement {
 
     public void deleteUser(FirebaseUser userToDelete, UserDeleteCallback callback){
 
-        //borramos los datos del usuario en RealTime Database
-
         rtFireBaseManagement.updateUserConnectionStatus(userToDelete, false);
         rtFireBaseManagement.stopListeningToChanges();
 
-        rtFireBaseManagement.deleteUserInDatabase(userToDelete, new UserDeleteCallback() {
+        //borramos el usuario
+        FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccessfulRemove() {
-                //borramos el usuario
-                userToDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            public void onSuccess(Void unused) {
+                //borramos los datos del usuario en RealTime Database
+                rtFireBaseManagement.deleteUserInDatabase(userToDelete, new UserDeleteCallback() {
                     @Override
-                    public void onSuccess(Void unused) {
+                    public void onSuccessfulRemove() {
 
                         callback.onSuccessfulRemove();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("Error", e.getMessage());
+                    public void onFailedRemove() {
+                        //nada
                     }
                 });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Error", e.getMessage());
+                callback.onFailedRemove();
             }
         });
     }

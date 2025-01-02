@@ -24,7 +24,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private String matchId;
     private String playerId;
     private FirebaseAuth mAuth;
-    private float x, y, radius; // Posición y tamaño del disco
+    private float x = 200, y = 200, radius = 50; // Posición y tamaño del disco
     private Paint paint2;        // Pintura para dibujar
     private RectF playerPaddle; // Pala del jugador
     private RectF opponentPaddle; // Pala del oponente
@@ -38,15 +38,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
 
 
-
-
     public GameView(Context context, String matchId, boolean isBottomPlayer) {
         super(context);
         this.isBottomPlayer = isBottomPlayer;
         this.matchId = matchId;
         getHolder().addCallback(this);
         paint = new Paint();
-        disk = new Disk(200, 200, 50); // Inicializa el disco
+        disk = new Disk(x, y, radius); // Inicializa el disco
         if(isBottomPlayer){
             isDiskVisible = true; // Asegura que el disco sea visible al inicio
         }else{
@@ -57,7 +55,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         rtFireBaseManagement.detectDiskChanges(playerId, matchId, new DiskChangeDetectionCallback() {
             @Override
             public void onCangeDetected(float x, float y, float vx, float vy) {
-                receiveDisk(x, y, vx, (float)-1.0*vy);
+                if(x<0+radius){x=0+radius;}
+                if(x>getWidth()-radius){x=getWidth()-radius;}
+                if(y<0+radius){y=0+radius;}
+                if(y>getHeight()-radius){y=getHeight()-radius;}
+                receiveDisk(getWidth()-x, y, (float)-1.0*vx, (float)-1.0*vy);
             }
 
             @Override
@@ -126,7 +128,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
     private void update(long deltaTime) {
         if (isDiskVisible && disk != null) {
-            boolean isInPlay = disk.update(deltaTime, playerPaddle, isBottomPlayer, this);
+            boolean isInPlay = disk.update(deltaTime, getHeight(), getWidth(), playerPaddle, isBottomPlayer, this);
             if (!isInPlay) {
                 isDiskVisible = false;
             }
@@ -176,23 +178,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         // Manejar la salida del disco
         isDiskVisible = false;
 
-        rtFireBaseManagement.changeDisk(matchId, disk.getX(), disk.getY(), disk.getVx(), disk.getVY());
-
-        /*esto para la puntuación
-        score--;
-        rtFireBaseManagement.updateScore(playerId, matchId, score);
-        receiveDisk(getWidth() / 2f, getHeight() / 2f, 0, -1);*/
-
-        // Aquí puedes enviar los datos a Firebase para que el otro jugador lo reciba
-        System.out.println("Disco enviado: posición=(" + x + ", " + y + "), ángulo=" + angle + ", enviado por=" + sender);
+        if(y - radius < 0){
+            rtFireBaseManagement.changeDisk(matchId, x, y, disk.getVx(), disk.getVY());
+        }else if (y + radius > getHeight()){
+            score--;
+            rtFireBaseManagement.updateScore(playerId, matchId, score);
+            receiveDisk(getWidth() / 2f, getHeight() / 2f, 0, 3);
+        }
     }
+
     public void receiveDisk(float newX, float newY, float newVx, float newVy) {
-        // Actualiza la posición y velocidad del disco
-        disk.setPosition(newX, newY);
-        disk.setVelocity(newVx, newVy);
 
         // Hacer visible el disco nuevamente
         isDiskVisible = true;
+
+        // Actualiza la posición y velocidad del disco
+        disk.setPosition(newX, newY);
+        disk.setVelocity(newVx, newVy);
     }
 
     @Override

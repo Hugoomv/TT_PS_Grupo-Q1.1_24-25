@@ -39,13 +39,13 @@ public class Disk {
         return this.vy;
     }
 
-    public boolean update(long deltaTime, RectF playerPaddle, boolean isBottomPlayer, OnDiskExitListener listener) {
+    public boolean update(long deltaTime, float height, float with, RectF playerPaddle, boolean isBottomPlayer, OnDiskExitListener listener) {
         // Actualiza la posición del disco
         x += vx * deltaTime / 16;
         y += vy * deltaTime / 16;
 
         // Rebote en los bordes laterales
-        if (x - radius < 0 || x + radius > 1080) {
+        if (x - radius < 0 || x + radius > with) {
             vx = -vx;
         }
 
@@ -53,7 +53,13 @@ public class Disk {
         if (y - radius < 0) {
             // Llamar al listener para notificar la salida
             listener.onDiskExit(x, y, calculateAngle(vx, vy), isBottomPlayer ? "bottom" : "top");
-            return false; // Indicar que el disco ha salido
+            return false;
+        }
+
+        // Detectar si el disco llega al borde inferior
+        if (y + radius > height) {
+            // Llamar al listener para notificar la salida por el borde inferior
+            listener.onDiskExit(x, y, calculateAngle(vx, vy), isBottomPlayer ? "bottom" : "top");
         }
 
         // Detectar colisión con la pala del jugador

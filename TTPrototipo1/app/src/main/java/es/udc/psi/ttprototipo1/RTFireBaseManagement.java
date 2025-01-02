@@ -84,6 +84,33 @@ public class RTFireBaseManagement {
         });
     }
 
+    public void changeDoNotDisturb(String userId, DoNotDisturbCallback callback){
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean oldAvailable = snapshot.child("isAvailable").getValue(Boolean.class);
+                boolean newAvailable = !oldAvailable;
+                userRef.child("isAvailable").setValue(newAvailable).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            callback.onSuccess(newAvailable);
+                        }else{
+                            callback.onFailure(task.getException().getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailure(error.getMessage());
+            }
+        });
+    }
+
     public void updateUserConnectionStatus(FirebaseUser user, boolean isConnected) {
         String userId = user.getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);

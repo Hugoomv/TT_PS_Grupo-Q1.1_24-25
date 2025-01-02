@@ -81,14 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        binder.startGameButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, GameActivity.class);
-            intent.putExtra("isBottomPlayer", true); // Cambia a false si es top
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            new Handler().postDelayed(() -> binder.startGameButton.setEnabled(true), 500); // Rehabilitar después de 500ms
-        });
-
         View.OnClickListener iListen = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                             binder.userInfo.setText("");
                         }).create().show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -117,8 +109,10 @@ public class MainActivity extends AppCompatActivity {
                     if (mAuth.getCurrentUser() != null) {
                         deleteUserAlert();
                     } else {
-                        Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
                     }
+                }else if (v.getId() == binder.doNotDisturbButton.getId()){
+                    doNotDisturb();
                 }
             }
         };
@@ -126,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         binder.logoutButton.setOnClickListener(iListen);
         binder.sendButton.setOnClickListener(iListen);
         binder.deleteUserButton.setOnClickListener(iListen);
+        binder.doNotDisturbButton.setOnClickListener(iListen);
 
         listenToChanges();
 
@@ -141,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             binder.userInfo.setText(getString(R.string.stablishname) + " " + currentUser.getDisplayName() +"\n" + getString(R.string.stablishmail) + " " + currentUser.getEmail());
             rtFireBaseManagement.updateUserConnectionStatus(currentUser, true);
         }else{
-            Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
 
             Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
             goLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -164,6 +159,24 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    private void doNotDisturb(){
+        rtFireBaseManagement.changeDoNotDisturb(mAuth.getCurrentUser().getUid(), new DoNotDisturbCallback() {
+            @Override
+            public void onSuccess(boolean policy) {
+                if (policy){
+                    Toast.makeText(getApplicationContext(), "No molestar desactivado", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "No molestar activado", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void logoutUser(){
         usersFireBaseManagement.logoutUser(mAuth.getCurrentUser());
         Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
@@ -183,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 final User[] selectedUser = {null};
 
                 if(users.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "no usuarios", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.nousersmsg, Toast.LENGTH_SHORT).show();
                 } else {
                     UsersAdapter usersAdapter = new UsersAdapter(users);
                     listView.setAdapter(usersAdapter);
@@ -195,9 +208,9 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                     new AlertDialog.Builder(MainActivity.this).setView(usrSelectView)
-                        .setMessage("Seleccione usuario").setPositiveButton("OK", (dialog, which) -> {
+                        .setMessage(R.string.selectuserdialogtxt).setPositiveButton(R.string.ok, (dialog, which) -> {
                             if(usrSelectBinding.selectedUser.getText().toString().isEmpty()) {
-                                Toast.makeText(getApplicationContext(), "Nope", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), R.string.nouserselectedmsg, Toast.LENGTH_SHORT).show();
                             }else{
 
                                 String newMatchId = mAuth.getCurrentUser().getUid()+selectedUser[0].getUserId();
@@ -209,11 +222,11 @@ public class MainActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onFail(String errorMsg) {
-                                        Toast.makeText(getApplicationContext(), "Error while creating match", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), getText(R.string.matchnotcreatedmsg) + ": " + errorMsg, Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
-                        }).setNegativeButton("Cancelar", (dialog, which) ->{
+                        }).setNegativeButton(R.string.cancel, (dialog, which) ->{
                             dialog.dismiss();
                         }).create().show();
                 }
@@ -228,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void managePetition(String senderId, String message){
-        AlertDialog invite = new AlertDialog.Builder(this).setMessage(message + ". Aceptar?").setPositiveButton("Ok", ((dialog, which) -> {
+        AlertDialog invite = new AlertDialog.Builder(this).setMessage(message + ". " + getText(R.string.acceptinvitequestiontxt)).setPositiveButton(R.string.ok, ((dialog, which) -> {
 
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "accept");
 
@@ -239,8 +252,8 @@ public class MainActivity extends AppCompatActivity {
             matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(matchAct);
 
-        })).setNegativeButton("Cancelar", ((dialog, which) -> {
-            Toast.makeText(getApplicationContext(), "Invite rejected", Toast.LENGTH_SHORT).show();
+        })).setNegativeButton(R.string.cancel, ((dialog, which) -> {
+            Toast.makeText(getApplicationContext(), R.string.inviterejectedmsg, Toast.LENGTH_SHORT).show();
             rtFireBaseManagement.sendMessage(mAuth.getCurrentUser(), senderId, "deny");
         })).setCancelable(false).create();
 
@@ -263,7 +276,12 @@ public class MainActivity extends AppCompatActivity {
                         matchAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(matchAct);
                     }else if(message.equals("deny")){
-                        Toast.makeText(getApplicationContext(), "invite was rejected", Toast.LENGTH_LONG).show();
+                        rtFireBaseManagement.deleteMatch(mAuth.getCurrentUser().getUid() + senderId, new MatchDeleteCallback() {
+                            @Override
+                            public void onSuccessfulRemove() {
+                                Toast.makeText(getApplicationContext(), R.string.inviterejectedmsg, Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
 
                 }
@@ -283,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
         usersFireBaseManagement.deleteUser(userToDelete, new UserDeleteCallback() {
             @Override
             public void onSuccessfulRemove() {
-                Toast.makeText(getApplicationContext(), "Usuario borrado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.userdeletedmsg, Toast.LENGTH_SHORT).show();
 
                 Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(goLogin);
@@ -292,17 +310,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailedRemove() {
-                Toast.makeText(getApplicationContext(), "vuelve a iniciar sesión para poder borrar la cuenta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.notloggedinawhilemsg, Toast.LENGTH_SHORT).show();
                 logoutUser();
             }
         });
     }
 
     private void deleteUserAlert(){
-        new AlertDialog.Builder(this).setMessage("Seguro que quieres borrar el usuario?").setPositiveButton("Ok", ((dialog, which) -> {
+        new AlertDialog.Builder(this).setMessage(R.string.deleteuserdialogtxt).setPositiveButton(R.string.ok, ((dialog, which) -> {
             deleteUser();
             binder.userInfo.setText("");
-        })).setNegativeButton("Cancelar", ((dialog, which) -> {
+        })).setNegativeButton(R.string.cancel, ((dialog, which) -> {
             dialog.dismiss();
         })).create().show();
     }

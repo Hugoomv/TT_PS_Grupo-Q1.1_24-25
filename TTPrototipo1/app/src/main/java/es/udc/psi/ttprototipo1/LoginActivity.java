@@ -85,14 +85,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccessfulTask() {
 
-                Toast.makeText(getApplicationContext(), "registro exitoso", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.successfulregistrymsg, Toast.LENGTH_SHORT).show();
 
                 logUser(email, password);
 
                 rtFireBaseManagement.setUpUserInDatabase(mAuth.getCurrentUser(), new UserSetupCallback() {
                     @Override
                     public void onSuccessfulTask() {
-                        Toast.makeText(getApplicationContext(), "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.userindbmsg, Toast.LENGTH_SHORT).show();
 
                         finish();
                     }
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailedTask(String errorMsg) {
-                Toast.makeText(getApplicationContext(), "registro fallido " + errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.failedregistrymsg + ": " + errorMsg, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String myName = user.getDisplayName();
 
-                Toast.makeText(getApplicationContext(), "Bienvenido, " + myName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getText(R.string.welcomemsg) + ", " + myName, Toast.LENGTH_SHORT).show();
 
                 Intent returnToSender = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(returnToSender);

@@ -33,6 +33,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private boolean isBottomPlayer; // Indica si el jugador está en la posición inferior
     private boolean isDiskVisible;
 
+    private Paint scorePaint; // Pintura para el texto del puntaje
     private int score = 5;
 
     private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
@@ -67,6 +68,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 stopGame();
             }
         });
+        scorePaint = new Paint(); // Inicializar el Paint para el puntaje
+        scorePaint.setColor(Color.WHITE); // Color del texto
+        scorePaint.setTextSize(50); // Tamaño del texto
+        scorePaint.setAntiAlias(true); // Suavizado del texto
+        scorePaint.setFakeBoldText(true); // Negrita
 
     }
 
@@ -153,6 +159,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 paint.setColor(Color.WHITE);
                 canvas.drawRect(playerPaddle, paint);
 
+                // Dibuja el puntaje en la esquina superior izquierda
+                String scoreText = "Score: " + score; // Formato del puntaje
+                canvas.drawText(scoreText, 50, 100, scorePaint); // Posición (50, 100)
+
                 getHolder().unlockCanvasAndPost(canvas);
 
             }
@@ -181,9 +191,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         if(y - radius < 0){
             rtFireBaseManagement.changeDisk(matchId, x, y, disk.getVx(), disk.getVY());
         }else if (y + radius > getHeight()){
+            receiveDisk(getWidth() / 2f, getHeight() / 2f, 2, 3);
+            rtFireBaseManagement.updateScore(playerId, matchId, score-1);
             score--;
-            rtFireBaseManagement.updateScore(playerId, matchId, score);
-            receiveDisk(getWidth() / 2f, getHeight() / 2f, 0, 3);
+
         }
     }
 

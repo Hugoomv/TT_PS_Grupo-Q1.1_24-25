@@ -480,21 +480,13 @@ public class RTFireBaseManagement {
     }
 
     public void setUpUserInRankingDatabase(FirebaseUser newUser, UserSetupCallback callback){
-        String name = newUser.getDisplayName();
-        String email = newUser.getEmail();
         String idUs = newUser.getUid();
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idUs);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("ranking").child(idUs);
 
         Map<String, Object> userData = new HashMap<>();
-        userData.put("userId", idUs);
-        userData.put("name", name);
-        userData.put("email", email);
-        userData.put("isConnected", true);
-        userData.put("isAvailable", true);
-        userData.put("lastSeen", ServerValue.TIMESTAMP);
-        userData.put("isWith", "");
-        userData.put("message", "");
+        userData.put("matchesPlayed", 0);
+        userData.put("matchesWon", 0);
 
         userRef.setValue(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -508,5 +500,26 @@ public class RTFireBaseManagement {
                 }
             }
         });
+    }
+
+    public void updateRankingStats(FirebaseUser user, boolean won){
+        FirebaseDatabase.getInstance().getReference("ranking").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int matchPlayed, matchWon;
+                matchPlayed = snapshot.child("matchesPlayed").getValue(Integer.class);
+                matchWon = snapshot.child("matchesWon").getValue(Integer.class);
+                FirebaseDatabase.getInstance().getReference("ranking").child(user.getUid()).child("matchesPlayed").setValue(matchPlayed+1);
+                if(won){
+                    FirebaseDatabase.getInstance().getReference("ranking").child(user.getUid()).child("matchesWon").setValue(matchWon+1);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("Error", error.getMessage());
+            }
+        });
+
     }
 }

@@ -31,8 +31,10 @@ public class RTFireBaseManagement {
     private ValueEventListener myMatchDataListener;
 
     private DatabaseReference playerScore;
-
     private ValueEventListener controlPScore;
+
+    private DatabaseReference whoWins;
+    private ValueEventListener winnerListener;
 
     private static RTFireBaseManagement instance;
 
@@ -380,7 +382,7 @@ public class RTFireBaseManagement {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 boolean is1;
-                if(snapshot.child("player1").child("id").equals(playerId)){
+                if(snapshot.child("player1").child("id").getValue(String.class).equals(playerId)){
                     is1 = true;
                     playerScore = FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("player1").child("score");
                 }else{
@@ -392,15 +394,15 @@ public class RTFireBaseManagement {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot newSnapshot) {
                         String winner;
-                        if(newSnapshot.getValue(Integer.class) == 0){
+                        if(newSnapshot.getValue(Integer.class) <= 0){
                             if(is1){
                                 winner = snapshot.child("player2").child("id").getValue(String.class);
+                                FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(winner);
+
                             }else{
                                 winner = snapshot.child("player1").child("id").getValue(String.class);
+                                FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(winner);
                             }
-
-                            FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(winner);
-
                         }
                     }
 
@@ -420,7 +422,6 @@ public class RTFireBaseManagement {
             }
         });
 
-
     }
 
     public void forfeit(String partidaId, String playerId){
@@ -428,7 +429,7 @@ public class RTFireBaseManagement {
         FirebaseDatabase.getInstance().getReference("matches").child(partidaId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child("player1").child("id").equals(playerId)){
+                if(snapshot.child("player1").child("id").getValue(String.class).equals(playerId)){
                     FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(snapshot.child("player2").child("id").getValue(String.class));
                 }else{
                     FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(snapshot.child("player1").child("id").getValue(String.class));
@@ -437,10 +438,75 @@ public class RTFireBaseManagement {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                //
+                Log.d("Error", error.getMessage());
             }
         });
+    }
 
+    public void stopControlingScore(){
+        if(playerScore != null && controlPScore != null){
+            playerScore.removeEventListener(controlPScore);
+            playerScore = null;
+            controlPScore = null;
+        }
+    }
 
+    public void controlWinner(String partidaId, WinnerCallback callback){
+
+        whoWins = FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner");
+        winnerListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String winner = snapshot.getValue(String.class);
+                if(!winner.equals("")){
+                    callback.declareWinner(winner);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("Error", error.getMessage());
+            }
+        };
+        whoWins.addValueEventListener(winnerListener);
+    }
+
+    public void stopControlingWinner(){
+        if(whoWins != null && winnerListener != null){
+            whoWins.removeEventListener(winnerListener);
+            whoWins = null;
+            winnerListener = null;
+        }
+    }
+
+    public void setUpUserInRankingDatabase(FirebaseUser newUser, UserSetupCallback callback){
+        String name = newUser.getDisplayName();
+        String email = newUser.getEmail();
+        String idUs = newUser.getUid();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idUs);
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", idUs);
+        userData.put("name", name);
+        userData.put("email", email);
+        userData.put("isConnected", true);
+        userData.put("isAvailable", true);
+        userData.put("lastSeen", ServerValue.TIMESTAMP);
+        userData.put("isWith", "");
+        userData.put("message", "");
+
+        userRef.setValue(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //Toast.makeText(contexto, "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
+                    callback.onSuccessfulTask();
+                } else {
+                    //Toast.makeText(contexto, "Error al guardar usuario en la bd", Toast.LENGTH_SHORT).show();
+                    callback.onFailedTask("registro fallido " + task.getException().getMessage());
+                }
+            }
+        });
     }
 }

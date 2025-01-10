@@ -1,0 +1,50 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="ButtonStyle">
+        <!-- Bordes redondeados -->
+        <item name="cornerRadius">16dp</item>
+
+        <!-- Texto -->
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+
+        <!-- Márgenes y centrado -->
+        <item name="android:layout_marginHorizontal">32dp</item>
+        <item name="android:layout_marginVertical">4dp</item>
+        <item name="android:gravity">center</item>
+
+        <!-- Definir un ancho y alto -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
+        <!-- Fondo de la pantalla -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- Ícono del Splash Screen -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+
+        <!-- Duración mínima de la pantalla -->
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor" >@android:color/transparent</item>
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowStyle</item>
+    </style>
+
+    <style name="AppTheme2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowStyle</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
+        <item name="android:navigationBarColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
+    </style>
+
+
+</resources>

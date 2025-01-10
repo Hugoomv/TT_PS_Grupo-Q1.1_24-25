@@ -51,4 +51,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+
 }

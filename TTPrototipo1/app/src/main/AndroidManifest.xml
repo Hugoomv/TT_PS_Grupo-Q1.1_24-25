@@ -19,9 +19,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="false">
+        </activity>
         <activity
             android:name=".GameActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme2" />
     </application>
 </manifest>

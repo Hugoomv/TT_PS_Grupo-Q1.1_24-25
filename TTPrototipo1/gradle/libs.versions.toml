@@ -13,6 +13,7 @@ firebaseAuth = "23.0.0"
 firebaseDatabase = "21.0.0"
 firebaseFirestore = "25.1.1"
 swiperefreshlayout = "1.1.0"
+preference = "1.2.1"
 
 [libraries]
 firebase-auth-v23100 = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
@@ -27,6 +28,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

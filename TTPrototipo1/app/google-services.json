@@ -1,8 +1,9 @@
 {
   "project_info": {
     "project_number": "314867400893",
+    "firebase_url": "https://prototipo-primero-default-rtdb.firebaseio.com",
     "project_id": "prototipo-primero",
-    "storage_bucket": "prototipo-primero.appspot.com"
+    "storage_bucket": "prototipo-primero.firebasestorage.app"
   },
   "client": [
     {

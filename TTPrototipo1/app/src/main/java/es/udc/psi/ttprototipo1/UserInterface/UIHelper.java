@@ -1,6 +1,8 @@
 package es.udc.psi.ttprototipo1.UserInterface;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -13,8 +15,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import es.udc.psi.ttprototipo1.MainActivity;
 import es.udc.psi.ttprototipo1.R;
+import es.udc.psi.ttprototipo1.SettingsActivity;
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 
 public class UIHelper {
@@ -23,12 +29,14 @@ public class UIHelper {
     private final DrawerLayout drawerLayout;
     private final NavigationView navigationView;
     private final Toolbar toolbar;
+    private final String username;
 
-    public UIHelper(Context context, DrawerLayout drawerLayout, NavigationView navigationView, Toolbar toolbar) {
+    public UIHelper(Context context, DrawerLayout drawerLayout, NavigationView navigationView, Toolbar toolbar, String username) {
         this.context = context;
         this.drawerLayout = drawerLayout;
         this.navigationView = navigationView;
         this.toolbar = toolbar;
+        this.username = username;
     }
 
     public void setupToolbar() {
@@ -42,7 +50,6 @@ public class UIHelper {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        Log.d("_TAG","Creando UI");
         setupNavigationView();
     }
 
@@ -63,7 +70,7 @@ public class UIHelper {
     }
 
     private void setupHeader() {
-        // Usar ViewBinding para acceder al encabezado
+        // Usar Binding para acceder al encabezado
         NavHeaderBinding headerBinding = NavHeaderBinding.bind(
             navigationView.getHeaderView(0)
         );
@@ -72,20 +79,29 @@ public class UIHelper {
             context.getString(R.string.title_click),
             Toast.LENGTH_SHORT
         ).show());
+
+        headerBinding.headerTextView.setText(username);
+
     }
 
     private void handleMenuItemClick(@NonNull MenuItem menuItem) {
-        // Aquí puedes manejar las acciones de cada ítem del menú
-        Toast.makeText(context, context.getString(getTitle(menuItem)), Toast.LENGTH_SHORT).show();
+        int id = menuItem.getItemId();
+        if (id == R.id.nav_settings) {
+            if (context instanceof MainActivity) {
+                Intent intent = new Intent(context, SettingsActivity.class);
+                context.startActivity(intent);
+            } else {
+                throw new IllegalStateException("El contexto no es una instancia de Activity");
+            }
+        }else {
+            Toast.makeText(context, context.getString(getTitle(menuItem)), Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private int getTitle(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
-        if (id == R.id.nav_camera){
-            return R.string.menu_camera;
-        } else if(id == R.id.nav_gallery){
-            return R.string.menu_gallery;
-        }else if (id == R.id.nav_settings) {
+        if (id == R.id.nav_settings) {
             return R.string.menu_ajustes;
         } else if (id == R.id.nav_exit) {
             return R.string.menu_salir;

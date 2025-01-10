@@ -4,5 +4,10 @@
         <!-- Customize your light theme here. -->
     </style>
 
-    <style name="Theme.TTPrototipo1" parent="Base.Theme.TTPrototipo1" />
+    <style name="Theme.TTPrototipo1" parent="Base.Theme.TTPrototipo1">
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+    </style>
+
+
 </resources>

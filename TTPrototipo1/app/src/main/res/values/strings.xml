@@ -1,26 +1,44 @@
 <resources>
     <string name="app_name">TTPrototipo1</string>
-    <string name="register">Register</string>
-    <string name="send">Send</string>
-    <string name="login">Login</string>
-    <string name="logout">Logout</string>
-    <string name="delete_account">Delete account</string>
+    <string name="register">Crear cuenta</string>
+    <string name="send">Mandar invitación</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="delete_account">Borrar cuenta</string>
+    <string name="donotdisturb">No molestar</string>
     <string name="defaulttext">Hello world</string>
 
-    <string name="logindialogtxt">Log in with an existing account</string>
-    <string name="registerdialogtxt">Create a new account</string>
-    <string name="logoutdialogtxt">Are you sure you want to log out?</string>
+    <string name="loginscreentxt">Inicia sesión para usar la app</string>
+    <string name="logindialogtxt">Inicia sesión con una cuenta ya creada</string>
+    <string name="registerdialogtxt">Crea una nueva cuenta</string>
+    <string name="logoutdialogtxt">¿Seguro que quieres cerrar sesión?</string>
+    <string name="deleteuserdialogtxt">¿Seguro que quieres borrar el usuario?</string>
+    <string name="selectuserdialogtxt">Seleccione un usuario</string>
+    <string name="acceptinvitequestiontxt">¿Aceptar?</string>
 
-    <string name="stablishname">Username:</string>
+    <string name="stablishname">Nombre de usuario:</string>
     <string name="stablishmail">E-mail:</string>
-    <string name="stablishpassw">Password:</string>
-    <string name="noaccount">Sing up?</string>
-    <string name="yesaccount">Have an account?</string>
+    <string name="stablishpassw">Contraseña:</string>
+    <string name="noaccount">¿Registrarse?</string>
+    <string name="yesaccount">¿Ya tienes una cuenta?</string>
 
     <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-
+    <string name="cancel">Cancelar</string>
     <string name="sendtotext">Mandar a: </string>
+
+    <string name="notloggedinmsg">No has iniciado sesión</string>
+    <string name="successfulregistrymsg">Registro exitoso</string>
+    <string name="failedregistrymsg">Registro fallido</string>
+    <string name="welcomemsg">Bienvenido</string>
+    <string name="userindbmsg">Usuario guardado en la bd</string>
+    <string name="nousersmsg">No hay usuarios activos </string>
+    <string name="nouserselectedmsg">Debes seleccionar un usuario</string>
+    <string name="matchnotcreatedmsg">Error al crear partido</string>
+    <string name="notloggedinawhilemsg">Vuelve a iniciar sesión para poder borrar la cuenta</string>
+    <string name="userdeletedmsg">Usuario borrado</string>
+    <string name="inviterejectedmsg">La invitación fue rechazada</string>
+    <string name="inviteacceptedmsg">La invitación fue aceptada</string>
+
     <string name="back_button_desc">Botón de retroceso</string>
     <string name="image_item_desc">image_item</string>
     <string name="profile_image_desc">profile_image_desc</string>
@@ -30,7 +48,7 @@
     <string name="iniciar_juego_inicio">Iniciar Juego</string>
     <string name="navigation_drawer_open">Abrir menú</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
-    <string name="profile_drawer_menu">Profile</string>
+    <string name="profile_drawer_menu">Perfil</string>
     <string name="profile_picture">profile_picture</string>
     <string name="enter_message">Introduce los datos</string>
     <string name="introduzca_el_mensaje_a_enviar_et">Introduzca el mensaje a enviar</string>
@@ -38,7 +56,7 @@
     <string name="menu_ajustes">Ajustes</string>
     <string name="menu_salir">Salir de la app</string>
     <string name="title_click">Title click</string>
-    <string name="menu_camera">Camera</string>
+    <string name="menu_camera">Cámara</string>
     <string name="menu_gallery">Galeria</string>
     <string name="texto_de_prueba">Texto de prueba</string>
 </resources>

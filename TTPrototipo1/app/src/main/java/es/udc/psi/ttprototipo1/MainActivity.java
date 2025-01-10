@@ -1,15 +1,18 @@
 package es.udc.psi.ttprototipo1;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -21,14 +24,18 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Objects;
 
+import es.udc.psi.ttprototipo1.UserInterface.ProfileImage;
 import es.udc.psi.ttprototipo1.UserInterface.UIHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
+import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int PICK_IMAGE_REQUEST = 1;
 
     private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
     private UsersFireBaseManagement usersFireBaseManagement = UsersFireBaseManagement.getInstance();
@@ -63,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         String username;
         FirebaseUser currentUser = mAuth.getCurrentUser();
         // Si el usuario no está logueado, el user puede ser null
-        if(currentUser==null){
+        if(currentUser == null){
             username = "Default";
         }
         else {
@@ -71,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // Pasar las vistas necesarias a UIHelper
         uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username);
-        uiHelper.setupToolbar();
-        uiHelper.setupDrawer();
+        uiHelper.setupUI();
 
     }
 
@@ -333,5 +339,43 @@ public class MainActivity extends AppCompatActivity {
             dialog.dismiss();
         })).create().show();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+
+            Uri selectedImageUri = data.getData();
+            if(selectedImageUri != null) {
+                try {
+                    // Log de URI para verificar
+
+                    // Convertir la URI en un InputStream para decodificarla
+                    InputStream imageStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
+                    // Verificar si se obtiene una imagen válida
+                    if (selectedImage != null) {
+
+                        // Mostrar la imagen en el ImageView
+
+                        NavHeaderBinding headerBinding = NavHeaderBinding.bind(binder.navigationView.getHeaderView(0));
+                        headerBinding.headerImage.setImageBitmap(selectedImage);
+
+                        // Aquí podrías agregar la lógica para guardar la imagen
+                        ProfileImage.saveProfileImage(this, selectedImage);
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.image_error, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("_TAG", "Error al cargar la imagen: " + e.getMessage());
+                }
+            }
+        }
+    }
+
 
 }

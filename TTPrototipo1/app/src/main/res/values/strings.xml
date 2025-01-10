@@ -62,4 +62,5 @@
     <string name="no_func">Funcionalidad no implementada</string>
     <string name="invalid_context">El contexto no es una instancia de Activity</string>
     <string name="appicon">appIcon</string>
+    <string name="image_error">Error: la imagen no es válida</string>
 </resources>

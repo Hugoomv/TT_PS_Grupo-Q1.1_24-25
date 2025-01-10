@@ -40,7 +40,7 @@ public class UIHelper {
     }
 
     public void setupToolbar() {
-        toolbar.setTitle(context.getString(R.string.app_name)); // Opcional: Cambiar título
+        toolbar.setTitle(context.getString(R.string.app_name));
     }
 
     public void setupDrawer() {

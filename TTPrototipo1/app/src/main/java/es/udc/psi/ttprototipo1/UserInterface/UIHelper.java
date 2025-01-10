@@ -66,7 +66,6 @@ public class UIHelper {
     private void setDefaultMenuItem() {
         MenuItem menuItem = navigationView.getMenu().getItem(0);
         menuItem.setChecked(true);
-        handleMenuItemClick(menuItem);
     }
 
     private void setupHeader() {
@@ -74,11 +73,7 @@ public class UIHelper {
         NavHeaderBinding headerBinding = NavHeaderBinding.bind(
             navigationView.getHeaderView(0)
         );
-        headerBinding.headerTitle.setOnClickListener(view -> Toast.makeText(
-            context,
-            context.getString(R.string.title_click),
-            Toast.LENGTH_SHORT
-        ).show());
+        //headerBinding.headerTitle.setOnClickListener(view -> );
 
         headerBinding.headerTextView.setText(username);
 
@@ -91,22 +86,16 @@ public class UIHelper {
                 Intent intent = new Intent(context, SettingsActivity.class);
                 context.startActivity(intent);
             } else {
-                throw new IllegalStateException("El contexto no es una instancia de Activity");
+                throw new IllegalStateException(context.getString(R.string.invalid_context));
             }
-        }else {
-            Toast.makeText(context, context.getString(getTitle(menuItem)), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private int getTitle(@NonNull MenuItem menuItem) {
-        int id = menuItem.getItemId();
-        if (id == R.id.nav_settings) {
-            return R.string.menu_ajustes;
-        } else if (id == R.id.nav_exit) {
-            return R.string.menu_salir;
+        }else if(id == R.id.nav_exit) {
+            if (context instanceof Activity) {
+                ((Activity) context).finishAffinity(); // Cierra la pila de tareas
+                System.exit(0);
+            }
         } else {
-            throw new IllegalArgumentException("menu option not implemented!!");
+            Toast.makeText(context, context.getString(R.string.no_func), Toast.LENGTH_SHORT).show();
         }
     }
+
 }

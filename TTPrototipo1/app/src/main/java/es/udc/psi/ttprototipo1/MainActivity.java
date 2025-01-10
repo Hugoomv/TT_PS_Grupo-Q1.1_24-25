@@ -60,9 +60,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
+        String username;
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        // Si el usuario no está logueado, el user puede ser null
+        if(currentUser==null){
+            username = "Default";
+        }
+        else {
+            username = currentUser.getDisplayName();
+        }
         // Pasar las vistas necesarias a UIHelper
-        uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, currentUser.getDisplayName());
+        uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username);
         uiHelper.setupToolbar();
         uiHelper.setupDrawer();
 

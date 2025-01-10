@@ -59,4 +59,6 @@
     <string name="menu_camera">Cámara</string>
     <string name="menu_gallery">Galeria</string>
     <string name="texto_de_prueba">Texto de prueba</string>
+    <string name="no_func">Funcionalidad no implementada</string>
+    <string name="invalid_context">El contexto no es una instancia de Activity</string>
 </resources>

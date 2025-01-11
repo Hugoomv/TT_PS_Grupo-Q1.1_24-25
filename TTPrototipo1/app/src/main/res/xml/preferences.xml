@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Opciones Generales">
+
+        <SwitchPreferenceCompat
+            android:key="notifications"
+            android:title="Habilitar notificaciones"
+            android:summary="Activa o desactiva las notificaciones"
+            android:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_theme"
+            android:title="Modo oscuro"
+            android:summary="Habilitar o deshabilitar el modo oscuro"
+            android:defaultValue="false"
+            android:summaryOn="Modo oscuro habilitado"
+            android:summaryOff="Modo claro habilitado"
+            android:enabled="true"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

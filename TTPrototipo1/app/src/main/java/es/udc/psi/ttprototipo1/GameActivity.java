@@ -1,6 +1,8 @@
 package es.udc.psi.ttprototipo1;
 
+
 import android.annotation.SuppressLint;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -20,7 +22,9 @@ public class GameActivity extends AppCompatActivity {
 
     private String matchId;
     private boolean isBottomPlayer;
+
     private boolean matchConcluded;
+
 
     private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
 
@@ -100,6 +104,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         binder.gameViewContainer.removeAllViews(); // Limpia las vistas del contenedor
+
 
         if(isBottomPlayer){
             rtFireBaseManagement.deleteMatch(this.matchId, new MatchDeleteCallback() {

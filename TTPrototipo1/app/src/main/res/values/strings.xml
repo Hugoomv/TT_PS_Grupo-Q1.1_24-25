@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">TTPrototipo1</string>
+
+    <string name="app_name">Space Rend Hockey</string>
+
     <string name="register">Crear cuenta</string>
     <string name="send">Mandar invitación</string>
     <string name="login">Iniciar sesión</string>
@@ -59,4 +61,8 @@
     <string name="menu_camera">Cámara</string>
     <string name="menu_gallery">Galeria</string>
     <string name="texto_de_prueba">Texto de prueba</string>
+    <string name="no_func">Funcionalidad no implementada</string>
+    <string name="invalid_context">El contexto no es una instancia de Activity</string>
+    <string name="appicon">appIcon</string>
+    <string name="image_error">Error: la imagen no es válida</string>
 </resources>

@@ -1,20 +1,35 @@
 package es.udc.psi.ttprototipo1.UserInterface;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.navigation.NavigationView;
 
+import es.udc.psi.ttprototipo1.MainActivity;
 import es.udc.psi.ttprototipo1.R;
+import es.udc.psi.ttprototipo1.SettingsActivity;
+import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 
 public class UIHelper {
@@ -23,16 +38,37 @@ public class UIHelper {
     private final DrawerLayout drawerLayout;
     private final NavigationView navigationView;
     private final Toolbar toolbar;
+    private final String username;
 
-    public UIHelper(Context context, DrawerLayout drawerLayout, NavigationView navigationView, Toolbar toolbar) {
+    private static final int PICK_IMAGE_REQUEST = 1;
+
+    public UIHelper(Context context, DrawerLayout drawerLayout, NavigationView navigationView, Toolbar toolbar, String username) {
         this.context = context;
         this.drawerLayout = drawerLayout;
         this.navigationView = navigationView;
         this.toolbar = toolbar;
+        this.username = username;
+    }
+
+    public void setupUI(){
+
+        // Aplicar tema guardado en SharedPreferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isDarkMode = preferences.getBoolean("pref_theme", false);
+
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
+        // Crear menú lateral y toolbar
+        setupToolbar();
+        setupDrawer();
     }
 
     public void setupToolbar() {
-        toolbar.setTitle(context.getString(R.string.app_name)); // Opcional: Cambiar título
+        toolbar.setTitle(context.getString(R.string.app_name));
     }
 
     public void setupDrawer() {
@@ -42,7 +78,6 @@ public class UIHelper {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        Log.d("_TAG","Creando UI");
         setupNavigationView();
     }
 
@@ -59,38 +94,53 @@ public class UIHelper {
     private void setDefaultMenuItem() {
         MenuItem menuItem = navigationView.getMenu().getItem(0);
         menuItem.setChecked(true);
-        handleMenuItemClick(menuItem);
     }
 
     private void setupHeader() {
-        // Usar ViewBinding para acceder al encabezado
+        // crear binding
         NavHeaderBinding headerBinding = NavHeaderBinding.bind(
             navigationView.getHeaderView(0)
         );
-        headerBinding.headerTitle.setOnClickListener(view -> Toast.makeText(
-            context,
-            context.getString(R.string.title_click),
-            Toast.LENGTH_SHORT
-        ).show());
+
+        // Presionar en el header del menu para cambiar la imagen de perfil
+        headerBinding.headerTextView.setOnClickListener(v -> openImagePicker());
+        headerBinding.headerImage.setOnClickListener(v -> openImagePicker());
+        headerBinding.headerTitle.setOnClickListener(v -> openImagePicker());
+
+        // Cargar la imagen guardada usando ProfileImageManager
+        Bitmap profileImage = ProfileImage.loadProfileImage(context);
+        if (profileImage != null) {
+            headerBinding.headerImage.setImageBitmap(profileImage);
+        }
+
+        // Nombre del usuario
+        headerBinding.headerTextView.setText(username);
     }
 
     private void handleMenuItemClick(@NonNull MenuItem menuItem) {
-        // Aquí puedes manejar las acciones de cada ítem del menú
-        Toast.makeText(context, context.getString(getTitle(menuItem)), Toast.LENGTH_SHORT).show();
+        int id = menuItem.getItemId();
+        if (id == R.id.nav_settings) { // Abrir ajustes
+            if (context instanceof MainActivity) {
+                Intent intent = new Intent(context, SettingsActivity.class);
+                ((Activity) context).startActivity(intent);
+            } else {
+                throw new IllegalStateException(context.getString(R.string.invalid_context));
+            }
+        }else if(id == R.id.nav_exit) { // Para salir de la app
+            if (context instanceof Activity) {
+                ((Activity) context).finishAffinity(); // Cierra la pila de tareas
+                System.exit(0);
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.no_func), Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private int getTitle(@NonNull MenuItem menuItem) {
-        int id = menuItem.getItemId();
-        if (id == R.id.nav_camera){
-            return R.string.menu_camera;
-        } else if(id == R.id.nav_gallery){
-            return R.string.menu_gallery;
-        }else if (id == R.id.nav_settings) {
-            return R.string.menu_ajustes;
-        } else if (id == R.id.nav_exit) {
-            return R.string.menu_salir;
-        } else {
-            throw new IllegalArgumentException("menu option not implemented!!");
+    // Abrir selector de imágenes
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (context instanceof Activity) {
+            ((Activity) context).startActivityForResult(intent, PICK_IMAGE_REQUEST);
         }
     }
 }

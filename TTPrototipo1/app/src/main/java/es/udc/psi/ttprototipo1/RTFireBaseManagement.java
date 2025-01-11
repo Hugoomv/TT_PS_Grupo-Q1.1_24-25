@@ -382,7 +382,9 @@ public class RTFireBaseManagement {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 boolean is1;
+
                 if(snapshot.child("player1").child("id").getValue(String.class).equals(playerId)){
+
                     is1 = true;
                     playerScore = FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("player1").child("score");
                 }else{
@@ -394,6 +396,7 @@ public class RTFireBaseManagement {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot newSnapshot) {
                         String winner;
+
                         if(newSnapshot.getValue(Integer.class) <= 0){
                             if(is1){
                                 winner = snapshot.child("player2").child("id").getValue(String.class);
@@ -403,6 +406,7 @@ public class RTFireBaseManagement {
                                 winner = snapshot.child("player1").child("id").getValue(String.class);
                                 FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(winner);
                             }
+
                         }
                     }
 
@@ -429,7 +433,9 @@ public class RTFireBaseManagement {
         FirebaseDatabase.getInstance().getReference("matches").child(partidaId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 if(snapshot.child("player1").child("id").getValue(String.class).equals(playerId)){
+
                     FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(snapshot.child("player2").child("id").getValue(String.class));
                 }else{
                     FirebaseDatabase.getInstance().getReference("matches").child(partidaId).child("winner").setValue(snapshot.child("player1").child("id").getValue(String.class));
@@ -438,6 +444,7 @@ public class RTFireBaseManagement {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
                 Log.d("Error", error.getMessage());
             }
         });

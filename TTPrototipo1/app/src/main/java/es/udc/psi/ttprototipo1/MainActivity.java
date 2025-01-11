@@ -1,6 +1,8 @@
 package es.udc.psi.ttprototipo1;
 
+
 import android.app.Activity;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,9 +14,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -23,10 +27,12 @@ import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +43,9 @@ import java.util.ArrayList;
 import es.udc.psi.ttprototipo1.UserInterface.ProfileImage;
 import es.udc.psi.ttprototipo1.UserInterface.UIHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
+
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
+
 import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
 
 
@@ -86,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             username = currentUser.getDisplayName();
         }
+
         // Pasar las vistas necesarias a UIHelper
         uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username);
         uiHelper.setupUI();

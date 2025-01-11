@@ -16,6 +16,7 @@
         android:layout_margin="40dp"
         android:textAlignment="center"/>
 
+
     <androidx.cardview.widget.CardView
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -37,11 +38,13 @@
     <Button
         android:id="@+id/login_screen_button"
         style="@style/ButtonStyle"
+
         android:text="@string/login" />
 
     <Button
         android:id="@+id/register_screen_button"
         style="@style/ButtonStyle"
+
         android:text="@string/register" />
 
 </LinearLayout>

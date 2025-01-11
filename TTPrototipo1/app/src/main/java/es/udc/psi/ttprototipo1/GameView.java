@@ -68,6 +68,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 stopGame();
             }
         });
+
         scorePaint = new Paint(); // Inicializar el Paint para el puntaje
         scorePaint.setColor(Color.WHITE); // Color del texto
         scorePaint.setTextSize(50); // Tamaño del texto
@@ -191,7 +192,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         if(y - radius < 0){
             rtFireBaseManagement.changeDisk(matchId, x, y, disk.getVx(), disk.getVY());
         }else if (y + radius > getHeight()){
-            receiveDisk(getWidth() / 2f, getHeight() / 2f, 2, 3);
+
+            receiveDisk(getWidth() / 2f, getHeight() / 2f, 0, 5);
+
             rtFireBaseManagement.updateScore(playerId, matchId, score-1);
             score--;
 

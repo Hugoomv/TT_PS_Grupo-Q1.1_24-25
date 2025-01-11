@@ -1,21 +1,28 @@
 package es.udc.psi.ttprototipo1.UserInterface;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -44,6 +51,18 @@ public class UIHelper {
     }
 
     public void setupUI(){
+
+        // Aplicar tema guardado en SharedPreferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isDarkMode = preferences.getBoolean("pref_theme", false);
+
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
+        // Crear menú lateral y toolbar
         setupToolbar();
         setupDrawer();
     }
@@ -103,7 +122,7 @@ public class UIHelper {
         if (id == R.id.nav_settings) { // Abrir ajustes
             if (context instanceof MainActivity) {
                 Intent intent = new Intent(context, SettingsActivity.class);
-                context.startActivity(intent);
+                ((Activity) context).startActivity(intent);
             } else {
                 throw new IllegalStateException(context.getString(R.string.invalid_context));
             }

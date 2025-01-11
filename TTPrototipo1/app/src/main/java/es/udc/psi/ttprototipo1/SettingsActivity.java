@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -35,6 +36,9 @@ public class SettingsActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.settings_container, new SettingsFragment())
                 .commit();
+
+
+
     }
 
     @Override

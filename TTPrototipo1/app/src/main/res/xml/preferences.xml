@@ -10,12 +10,14 @@
             android:summary="Activa o desactiva las notificaciones"
             android:defaultValue="true" />
 
-        <EditTextPreference
-            android:key="username"
-            android:title="Nombre de usuario"
-            android:summary="Cambia tu nombre de usuario"
-            android:dialogTitle="Escribe tu nombre de usuario"
-            android:inputType="text" />
+        <SwitchPreferenceCompat
+            android:key="pref_theme"
+            android:title="Modo oscuro"
+            android:summary="Habilitar o deshabilitar el modo oscuro"
+            android:defaultValue="false"
+            android:summaryOn="Modo oscuro habilitado"
+            android:summaryOff="Modo claro habilitado"
+            android:enabled="true"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

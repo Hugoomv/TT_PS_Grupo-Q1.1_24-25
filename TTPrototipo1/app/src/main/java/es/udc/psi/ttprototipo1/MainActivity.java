@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +34,9 @@ import es.udc.psi.ttprototipo1.UserInterface.UIHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
+
+
+//TODO splash screen
 
 public class MainActivity extends AppCompatActivity {
 
@@ -376,6 +381,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }

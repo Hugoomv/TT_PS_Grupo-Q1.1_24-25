@@ -1,13 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.TTPrototipo1" parent="Theme.Material3.DayNight">
+    <style name="Base.Theme.TTPrototipo1" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
     </style>
 
     <style name="Theme.TTPrototipo1" parent="Base.Theme.TTPrototipo1">
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="drawerArrowStyle">@color/white</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
+        <item name="android:navigationBarColor">@color/white</item>
     </style>
 
+    <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
+        <!-- Fondo de la pantalla -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- Ícono del Splash Screen -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+
+        <!-- Duración mínima de la pantalla -->
+        <item name="postSplashScreenTheme">@style/Theme.TTPrototipo1</item>
+    </style>
 
 </resources>

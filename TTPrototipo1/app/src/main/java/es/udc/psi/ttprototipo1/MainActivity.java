@@ -146,8 +146,6 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
                     }
-                }else if (v.getId() == binder.doNotDisturbButton.getId()){
-                    doNotDisturb();
                 }
             }
         };
@@ -155,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
         binder.logoutButton.setOnClickListener(iListen);
         binder.sendButton.setOnClickListener(iListen);
         binder.deleteUserButton.setOnClickListener(iListen);
-        binder.doNotDisturbButton.setOnClickListener(iListen);
 
         listenToChanges();
     }
@@ -191,24 +188,6 @@ public class MainActivity extends AppCompatActivity {
         rtFireBaseManagement.stopListeningToChanges();
 
         super.onPause();
-    }
-
-    private void doNotDisturb(){
-        rtFireBaseManagement.changeDoNotDisturb(mAuth.getCurrentUser().getUid(), new DoNotDisturbCallback() {
-            @Override
-            public void onSuccess(boolean policy) {
-                if (policy){
-                    Toast.makeText(getApplicationContext(), "No molestar desactivado", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getApplicationContext(), "No molestar activado", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(String errorMsg) {
-                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void logoutUser(){

@@ -23,11 +23,6 @@
             android:layout_height="?attr/actionBarSize" />
 
         <Button
-            android:id="@+id/doNotDisturbButton"
-            style="@style/ButtonStyle"
-            android:text="@string/donotdisturb" />
-
-        <Button
             style="@style/ButtonStyle"
             android:id="@+id/send_button"
             android:text="@string/send" />

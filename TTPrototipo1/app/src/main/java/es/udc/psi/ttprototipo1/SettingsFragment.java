@@ -9,11 +9,14 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import es.udc.psi.ttprototipo1.databinding.ActivitySettingsBinding;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     ActivitySettingsBinding binding;
+    private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -23,6 +26,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Configurar el comportamiento del SwitchPreferenceCompat
         SwitchPreferenceCompat themeSwitch = findPreference("pref_theme");
+        SwitchPreferenceCompat disturbSwitch = findPreference("notifications");
+
         if (themeSwitch != null) {
             themeSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean isDarkMode = (boolean) newValue;
@@ -41,6 +46,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true; // Devuelve true para guardar el nuevo valor
             });
         }
+
+        if(disturbSwitch != null){
+            disturbSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean allowInvites = (boolean) newValue;
+
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
+                editor.putBoolean("notifications", allowInvites);
+                editor.apply();
+
+                doNotDisturb(allowInvites);
+
+                return true;
+            });
+        }
     }
 
     private void applyThemeBasedOnPreferences() {
@@ -52,5 +71,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+    }
+
+    private void doNotDisturb(boolean disturbOrNot){
+        rtFireBaseManagement.changeDoNotDisturb(FirebaseAuth.getInstance().getCurrentUser().getUid(), disturbOrNot, new DoNotDisturbCallback() {
+            @Override
+            public void onSuccess(boolean policy) {
+                if (policy){
+                    Log.d("_TAG","No molestar desactivado");
+                }else{
+                    Log.d("_TAG","No molestar activado");
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                Log.d("_TAG",errorMsg);
+            }
+        });
     }
 }

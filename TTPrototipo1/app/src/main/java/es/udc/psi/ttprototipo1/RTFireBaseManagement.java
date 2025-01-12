@@ -90,29 +90,16 @@ public class RTFireBaseManagement {
         });
     }
 
-    public void changeDoNotDisturb(String userId, DoNotDisturbCallback callback){
+    public void changeDoNotDisturb(String userId, boolean disturb, DoNotDisturbCallback callback){
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("users").child(userId).child("isAvailable").setValue(disturb).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean oldAvailable = snapshot.child("isAvailable").getValue(Boolean.class);
-                boolean newAvailable = !oldAvailable;
-                userRef.child("isAvailable").setValue(newAvailable).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            callback.onSuccess(newAvailable);
-                        }else{
-                            callback.onFailure(task.getException().getMessage());
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                callback.onFailure(error.getMessage());
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    callback.onSuccess(disturb);
+                }else{
+                    callback.onFailure(task.getException().getMessage());
+                }
             }
         });
     }

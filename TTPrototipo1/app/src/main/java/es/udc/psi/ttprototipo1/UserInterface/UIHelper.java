@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -25,10 +26,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import es.udc.psi.ttprototipo1.LoginActivity;
 import es.udc.psi.ttprototipo1.MainActivity;
 import es.udc.psi.ttprototipo1.R;
 import es.udc.psi.ttprototipo1.SettingsActivity;
+import es.udc.psi.ttprototipo1.UserDeleteCallback;
+import es.udc.psi.ttprototipo1.UsersFireBaseManagement;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 
@@ -39,6 +45,9 @@ public class UIHelper {
     private final NavigationView navigationView;
     private final Toolbar toolbar;
     private final String username;
+
+    private UsersFireBaseManagement usersFireBaseManagement = UsersFireBaseManagement.getInstance();
+    private FirebaseAuth mAuth;
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -131,7 +140,15 @@ public class UIHelper {
                 ((Activity) context).finishAffinity(); // Cierra la pila de tareas
                 System.exit(0);
             }
-        } else {
+        }else if(id == R.id.log_out){
+            if(context instanceof MainActivity){
+                alertLogout();
+            }
+        }else if(id == R.id.delete_user) {
+            if(context instanceof MainActivity){
+                deleteUserAlert();
+            }
+        }else {
             Toast.makeText(context, context.getString(R.string.no_func), Toast.LENGTH_SHORT).show();
         }
     }
@@ -142,5 +159,57 @@ public class UIHelper {
         if (context instanceof Activity) {
             ((Activity) context).startActivityForResult(intent, PICK_IMAGE_REQUEST);
         }
+    }
+
+    private void logoutUser(){
+        usersFireBaseManagement.logoutUser(mAuth.getCurrentUser());
+        Intent goLogin = new Intent(context, LoginActivity.class);
+        ((Activity)context).startActivity(goLogin);
+        ((Activity)context).finish();
+    }
+
+    private void alertLogout(){
+
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() != null) {
+            //alertdialog para confirmar cierre de sesión
+            new AlertDialog.Builder(context).setMessage(R.string.logoutdialogtxt).setNegativeButton(R.string.cancel, (dialog, which) -> {
+                dialog.dismiss();
+            }).setPositiveButton(R.string.ok, (dialog, which) -> {
+                logoutUser();
+            }).create().show();
+        } else {
+            Toast.makeText(context, R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteUser(){
+
+        FirebaseUser userToDelete = mAuth.getCurrentUser();
+
+        usersFireBaseManagement.deleteUser(userToDelete, new UserDeleteCallback() {
+            @Override
+            public void onSuccessfulRemove() {
+                Toast.makeText(context, R.string.userdeletedmsg, Toast.LENGTH_SHORT).show();
+
+                Intent goLogin = new Intent(context, LoginActivity.class);
+                ((Activity)context).startActivity(goLogin);
+                ((Activity)context).finish();
+            }
+
+            @Override
+            public void onFailedRemove() {
+                Toast.makeText(context, R.string.notloggedinawhilemsg, Toast.LENGTH_LONG).show();
+                logoutUser();
+            }
+        });
+    }
+
+    private void deleteUserAlert(){
+        new AlertDialog.Builder(context).setMessage(R.string.deleteuserdialogtxt).setPositiveButton(R.string.ok, ((dialog, which) -> {
+            deleteUser();
+        })).setNegativeButton(R.string.cancel, ((dialog, which) -> {
+            dialog.dismiss();
+        })).create().show();
     }
 }

@@ -27,16 +27,6 @@
             android:id="@+id/send_button"
             android:text="@string/send" />
 
-        <Button
-            android:id="@+id/logout_button"
-            style="@style/ButtonStyle"
-            android:text="@string/logout" />
-
-        <Button
-            android:id="@+id/delete_user_button"
-            style="@style/ButtonStyle"
-            android:text="@string/delete_account" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

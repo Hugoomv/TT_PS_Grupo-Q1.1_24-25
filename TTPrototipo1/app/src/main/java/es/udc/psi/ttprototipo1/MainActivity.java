@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 
 import androidx.appcompat.app.AlertDialog;
@@ -26,12 +24,6 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-
-import android.animation.ObjectAnimator;
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.splashscreen.SplashScreen;
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
 
     private RTFireBaseManagement rtFireBaseManagement = RTFireBaseManagement.getInstance();
-    private UsersFireBaseManagement usersFireBaseManagement = UsersFireBaseManagement.getInstance();
 
     private ActivityMainBinding binder;
     private View myView;
@@ -119,40 +110,16 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener iListen = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.getId() == binder.logoutButton.getId()) {
-
-                    if (mAuth.getCurrentUser() != null) {
-                        //alertdialog para confirmar cierre de sesión
-                        new AlertDialog.Builder(MainActivity.this).setMessage(R.string.logoutdialogtxt).setNegativeButton(R.string.cancel, (dialog, which) -> {
-                            dialog.dismiss();
-                        }).setPositiveButton(R.string.ok, (dialog, which) -> {
-                            logoutUser();
-                            binder.userInfo.setText("");
-                        }).create().show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
-                    }
-
-
-                } else if (v.getId() == binder.sendButton.getId()) {
+                if (v.getId() == binder.sendButton.getId()) {
 
                     //alertdialog para mandar mensaje en el edittext
                     sendButtonAlert();
 
-                } else if (v.getId() == binder.deleteUserButton.getId()) {
-                    //delete user
-                    if (mAuth.getCurrentUser() != null) {
-                        deleteUserAlert();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         };
 
-        binder.logoutButton.setOnClickListener(iListen);
         binder.sendButton.setOnClickListener(iListen);
-        binder.deleteUserButton.setOnClickListener(iListen);
 
         listenToChanges();
     }
@@ -188,13 +155,6 @@ public class MainActivity extends AppCompatActivity {
         rtFireBaseManagement.stopListeningToChanges();
 
         super.onPause();
-    }
-
-    private void logoutUser(){
-        usersFireBaseManagement.logoutUser(mAuth.getCurrentUser());
-        Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(goLogin);
-        finish();
     }
 
     private void sendButtonAlert(){
@@ -305,37 +265,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void deleteUser(){
-
-        FirebaseUser userToDelete = mAuth.getCurrentUser();
-
-        usersFireBaseManagement.deleteUser(userToDelete, new UserDeleteCallback() {
-            @Override
-            public void onSuccessfulRemove() {
-                Toast.makeText(getApplicationContext(), R.string.userdeletedmsg, Toast.LENGTH_SHORT).show();
-
-                Intent goLogin = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(goLogin);
-                finish();
-            }
-
-            @Override
-            public void onFailedRemove() {
-                Toast.makeText(getApplicationContext(), R.string.notloggedinawhilemsg, Toast.LENGTH_SHORT).show();
-                logoutUser();
-            }
-        });
-    }
-
-    private void deleteUserAlert(){
-        new AlertDialog.Builder(this).setMessage(R.string.deleteuserdialogtxt).setPositiveButton(R.string.ok, ((dialog, which) -> {
-            deleteUser();
-            binder.userInfo.setText("");
-        })).setNegativeButton(R.string.cancel, ((dialog, which) -> {
-            dialog.dismiss();
-        })).create().show();
     }
 
     @Override

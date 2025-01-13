@@ -6,8 +6,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_launcher_foreground"
+            android:icon="@drawable/ic_settings"
             android:title="@string/menu_ajustes" />
+
+        <item
+            android:id="@+id/log_out"
+            android:icon="@drawable/ic_svg_logo"
+            android:title="@string/logout" />
+
+        <item
+            android:id="@+id/delete_user"
+            android:icon="@drawable/ic_svg_logo"
+            android:title="@string/delete_account" />
 
         <item
             android:id="@+id/nav_exit"

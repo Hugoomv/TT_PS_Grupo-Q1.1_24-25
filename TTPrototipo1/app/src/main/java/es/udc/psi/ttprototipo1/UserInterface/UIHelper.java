@@ -1,6 +1,5 @@
 package es.udc.psi.ttprototipo1.UserInterface;
 
-import static android.app.Activity.RESULT_OK;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,15 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +31,6 @@ import es.udc.psi.ttprototipo1.R;
 import es.udc.psi.ttprototipo1.SettingsActivity;
 import es.udc.psi.ttprototipo1.UserDeleteCallback;
 import es.udc.psi.ttprototipo1.UsersFireBaseManagement;
-import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
 import es.udc.psi.ttprototipo1.databinding.ConfirmDeleteDialogBinding;
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 
@@ -47,17 +41,19 @@ public class UIHelper {
     private final NavigationView navigationView;
     private final Toolbar toolbar;
     private final String username;
+    private final String email;
 
     private UsersFireBaseManagement usersFireBaseManagement = UsersFireBaseManagement.getInstance();
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    public UIHelper(Context context, DrawerLayout drawerLayout, NavigationView navigationView, Toolbar toolbar, String username) {
+    public UIHelper(Context context, DrawerLayout drawerLayout, NavigationView navigationView, Toolbar toolbar, String username, String email) {
         this.context = context;
         this.drawerLayout = drawerLayout;
         this.navigationView = navigationView;
         this.toolbar = toolbar;
         this.username = username;
+        this.email = email;
     }
 
     public void setupUI(){
@@ -124,7 +120,7 @@ public class UIHelper {
         }
 
         // Nombre del usuario
-        headerBinding.headerTextView.setText(username);
+        headerBinding.headerTextView.setText(username + "\n" + email);
     }
 
     private void handleMenuItemClick(@NonNull MenuItem menuItem) {

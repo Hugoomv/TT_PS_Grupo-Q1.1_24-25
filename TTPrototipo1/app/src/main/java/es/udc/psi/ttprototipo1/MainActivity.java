@@ -76,18 +76,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
-        String username;
+        String username, email;
         FirebaseUser currentUser = mAuth.getCurrentUser();
         // Si el usuario no está logueado, el user puede ser null
         if(currentUser == null){
             username = "Default";
+            email = "default";
         }
         else {
             username = currentUser.getDisplayName();
+            email = currentUser.getEmail();
         }
 
         // Pasar las vistas necesarias a UIHelper
-        uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username);
+        uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username, email);
         uiHelper.setupUI();
 
     }
@@ -131,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if(currentUser != null){
-            binder.userInfo.setText(getString(R.string.stablishname) + " " + currentUser.getDisplayName() +"\n" + getString(R.string.stablishmail) + " " + currentUser.getEmail());
             rtFireBaseManagement.updateUserConnectionStatus(currentUser, true);
         }else{
             Toast.makeText(getApplicationContext(), R.string.notloggedinmsg, Toast.LENGTH_SHORT).show();

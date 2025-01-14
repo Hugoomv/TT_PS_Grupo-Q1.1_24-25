@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
     private UIHelper uiHelper;
 
+    private boolean seeingTop;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -88,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
             email = currentUser.getEmail();
         }
 
+        binder.userInfo.setVisibility(View.GONE);
+        seeingTop = false;
+
         // Pasar las vistas necesarias a UIHelper
         uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username, email);
         uiHelper.setupUI();
@@ -117,11 +122,19 @@ public class MainActivity extends AppCompatActivity {
                     //alertdialog para mandar mensaje en el edittext
                     sendButtonAlert();
 
+                }else if (v.getId() == binder.topButton.getId()){
+                    if(seeingTop){
+                        binder.userInfo.setVisibility(View.GONE);
+                        seeingTop = false;
+                    }else{
+                        checkRanking();
+                    }
                 }
             }
         };
 
         binder.sendButton.setOnClickListener(iListen);
+        binder.topButton.setOnClickListener(iListen);
 
         listenToChanges();
     }
@@ -275,11 +288,30 @@ public class MainActivity extends AppCompatActivity {
                 /*
                 *   usar estas funciones, las demás darán datos vacíos en este caso
                 *   public String getName() { return name; }
-                *   public String getEmail() { return email; }
                 *   public int getMatchesPlayed() { return matchesPlayed; }
                 *   public int getMatchesWon(){ return matchesWon; }
                 *
                 */
+
+                StringBuilder ranking = new StringBuilder();
+                int i = 1;
+
+                for (User actualUser : users){
+                    ranking.append(i).append("->").append(actualUser.getName().toString())
+                        .append(": played ")
+                        .append(actualUser.getMatchesPlayed())
+                        .append(", won ")
+                        .append(actualUser.getMatchesWon())
+                        .append("\n");
+
+                    i++;
+                }
+
+                Log.d("cosas", ranking.toString());
+
+                binder.userInfo.setText(ranking.toString());
+                binder.userInfo.setVisibility(View.VISIBLE);
+                seeingTop = true;
             }
 
             @Override

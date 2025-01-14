@@ -19,6 +19,8 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -518,7 +520,7 @@ public class RTFireBaseManagement {
         ArrayList<User> totalUsers = new ArrayList<>();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("ranking");
 
-        userRef.orderByChild("matchesWon").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.orderByChild("matchesWon").limitToLast(10).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 totalUsers.clear();
@@ -526,21 +528,16 @@ public class RTFireBaseManagement {
 
                     String name = userSnapshot.child("name").getValue(String.class);
                     String uid = userSnapshot.child("uId").getValue(String.class);
-                    String email = userSnapshot.child("email").getValue(String.class);
                     int matchesPlayed = userSnapshot.child("matchesPlayed").getValue(Integer.class);
                     int matchesWon = userSnapshot.child("matchesWon").getValue(Integer.class);
 
-                    if(name != null && email != null && matchesPlayed != 0) {
-                        if(uid.equals(currentUser.getUid()))
-                            name = String.valueOf(R.string.you);
-                        User user = new User(name, email, matchesPlayed, matchesWon);
+                    if(name != null) {
+                        User user = new User(name, matchesPlayed, matchesWon);
                         totalUsers.add(user);
                     }
-
-                    if(totalUsers.size() == 10){
-                        break;
-                    }
                 }
+
+                Collections.reverse(totalUsers);
                 callback.onUsersLoaded(totalUsers);
 
             }

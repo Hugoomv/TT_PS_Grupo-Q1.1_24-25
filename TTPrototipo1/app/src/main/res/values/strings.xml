@@ -7,6 +7,7 @@
     <string name="login">Iniciar sesión</string>
     <string name="logout">Cerrar sesión</string>
     <string name="delete_account">Borrar cuenta</string>
+    <string name="top_players">Mejores jugadores</string>
     <string name="donotdisturb">No molestar</string>
     <string name="defaulttext">Hello world</string>
 

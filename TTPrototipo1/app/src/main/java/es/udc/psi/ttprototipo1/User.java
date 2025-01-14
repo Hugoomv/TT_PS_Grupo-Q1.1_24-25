@@ -20,9 +20,8 @@ public class User {
         this.lastSeen = lastSeen;
     }
 
-    public User(String name,  String email, int played, int won){
+    public User(String name, int played, int won){
         this.name = name;
-        this.email = email;
         matchesPlayed = played;
         matchesWon = won;
     }

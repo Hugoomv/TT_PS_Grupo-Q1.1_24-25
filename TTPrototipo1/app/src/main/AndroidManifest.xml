@@ -32,6 +32,7 @@
         <activity
             android:name=".GameActivity"
             android:exported="false"
+            android:screenOrientation="locked"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".SettingsActivity"

@@ -307,8 +307,6 @@ public class MainActivity extends AppCompatActivity {
                     i++;
                 }
 
-                Log.d("cosas", ranking.toString());
-
                 binder.userInfo.setText(ranking.toString());
                 binder.userInfo.setVisibility(View.VISIBLE);
                 seeingTop = true;

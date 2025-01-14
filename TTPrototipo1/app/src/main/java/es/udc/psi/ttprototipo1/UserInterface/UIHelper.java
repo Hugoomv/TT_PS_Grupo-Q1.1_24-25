@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.view.MenuItem;
@@ -24,6 +25,8 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Locale;
 
 import es.udc.psi.ttprototipo1.LoginActivity;
 import es.udc.psi.ttprototipo1.MainActivity;
@@ -67,6 +70,9 @@ public class UIHelper {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+
+        // Cargar el idioma guardado
+        LocaleHelper.loadLocale(context);
 
         // Crear menú lateral y toolbar
         setupToolbar();

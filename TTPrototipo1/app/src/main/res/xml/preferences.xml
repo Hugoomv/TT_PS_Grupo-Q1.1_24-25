@@ -2,22 +2,31 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="Opciones Generales">
+        android:title="">
 
         <SwitchPreferenceCompat
             android:key="notifications"
-            android:title="Habilitar notificaciones"
-            android:summary="Activa o desactiva las notificaciones"
+            android:title="@string/enable_notif"
+            android:summary="@string/enable_disable_notif"
             android:defaultValue="true" />
 
         <SwitchPreferenceCompat
             android:key="pref_theme"
-            android:title="Modo oscuro"
-            android:summary="Habilitar o deshabilitar el modo oscuro"
+            android:title="@string/dark_mode"
+            android:summary="@string/dark_mode_switch"
             android:defaultValue="false"
-            android:summaryOn="Modo oscuro habilitado"
-            android:summaryOff="Modo claro habilitado"
+            android:summaryOn="@string/dark_mode_enable"
+            android:summaryOff="@string/light_mode_enable"
             android:enabled="true"/>
+
+        <ListPreference
+            android:key="language_pref"
+            android:title="@string/language"
+            android:summary="@string/choose_language"
+            android:dialogTitle="@string/language"
+            android:entries="@array/language_options"
+            android:entryValues="@array/language_values"
+            android:defaultValue="es" />
     </PreferenceCategory>
 
 </PreferenceScreen>

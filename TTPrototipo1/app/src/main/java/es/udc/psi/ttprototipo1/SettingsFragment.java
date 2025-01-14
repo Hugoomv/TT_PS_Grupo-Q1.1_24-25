@@ -2,15 +2,19 @@ package es.udc.psi.ttprototipo1;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
+import androidx.preference.ListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import es.udc.psi.ttprototipo1.UserInterface.LocaleHelper;
 import es.udc.psi.ttprototipo1.databinding.ActivitySettingsBinding;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -24,9 +28,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.preferences, rootKey);
         Log.d("_TAG","SettingsFragment");
 
-        // Configurar el comportamiento del SwitchPreferenceCompat
+        // Configurar preferencias
         SwitchPreferenceCompat themeSwitch = findPreference("pref_theme");
         SwitchPreferenceCompat disturbSwitch = findPreference("notifications");
+        ListPreference languagePreference = findPreference("language_pref");
 
         if (themeSwitch != null) {
             themeSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -39,9 +44,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 // Aplicar tema inmediatamente
                 applyThemeBasedOnPreferences();
-
-                // Reiniciar la actividad para reflejar el cambio de tema
-                requireActivity().recreate();
 
                 return true; // Devuelve true para guardar el nuevo valor
             });
@@ -58,6 +60,22 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 doNotDisturb(allowInvites);
 
                 return true;
+            });
+        }
+
+        // Obtener la preferencia de idioma
+        if (languagePreference != null) {
+            languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                String selectedLanguage = newValue.toString();
+                LocaleHelper.setLocale(requireContext(), selectedLanguage);
+
+                // Crear un objeto LocaleListCompat con el idioma seleccionado
+                LocaleListCompat localeListCompat = LocaleListCompat.forLanguageTags(selectedLanguage);
+
+                // Aplicar las configuraciones de idioma a nivel de la aplicación
+                AppCompatDelegate.setApplicationLocales(localeListCompat);
+
+                return true; // Guardar el nuevo valor
             });
         }
     }

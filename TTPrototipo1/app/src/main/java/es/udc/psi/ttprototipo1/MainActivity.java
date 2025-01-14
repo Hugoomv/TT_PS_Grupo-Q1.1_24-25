@@ -41,8 +41,6 @@ import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 import es.udc.psi.ttprototipo1.databinding.UserSelectUsrDialogBinding;
 
 
-//TODO splash screen
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -307,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
                     i++;
                 }
 
+                Log.d("cosas", ranking.toString());
+
                 binder.userInfo.setText(ranking.toString());
                 binder.userInfo.setVisibility(View.VISIBLE);
                 seeingTop = true;
@@ -355,5 +355,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 }

@@ -1,0 +1,77 @@
+<resources>
+
+    <string name="app_name">Space Rend Hockey</string>
+
+    <string name="register">Create Account</string>
+    <string name="send">Send Invitation</string>
+    <string name="login">Log In</string>
+    <string name="logout">Log Out</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="top_players">Top Players</string>
+
+    <string name="loginscreentxt">Log in to use the app</string>
+    <string name="logindialogtxt">Log in with an existing account</string>
+    <string name="registerdialogtxt">Create a new account</string>
+    <string name="logoutdialogtxt">Are you sure you want to log out?</string>
+    <string name="deleteuserdialogtxt">Are you sure you want to delete the user?</string>
+    <string name="selectuserdialogtxt">Select a user</string>
+    <string name="acceptinvitequestiontxt">Accept?</string>
+
+    <string name="stablishname">Username:</string>
+    <string name="stablishmail">E-mail:</string>
+    <string name="stablishpassw">Password:</string>
+    <string name="noaccount">Sign up?</string>
+    <string name="yesaccount">Already have an account?</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="sendtotext">Send to: </string>
+
+    <string name="notloggedinmsg">You are not logged in</string>
+    <string name="successfulregistrymsg">Registration successful</string>
+    <string name="failedregistrymsg">Registration failed</string>
+    <string name="welcomemsg">Welcome</string>
+    <string name="userindbmsg">User saved in the database</string>
+    <string name="nousersmsg">No active users</string>
+    <string name="nouserselectedmsg">You must select a user</string>
+    <string name="matchnotcreatedmsg">Error creating match</string>
+    <string name="userdeletedmsg">User deleted</string>
+    <string name="inviterejectedmsg">The invitation was rejected</string>
+
+    <string name="navigation_drawer_open">Open Menu</string>
+    <string name="navigation_drawer_close">Close Menu</string>
+    <string name="menu_ajustes">Settings</string>
+    <string name="menu_salir">Exit the App</string>
+    <string name="texto_de_prueba">Test Text</string>
+    <string name="no_func">Functionality not implemented</string>
+    <string name="invalid_context">The context is not an instance of Activity</string>
+    <string name="appicon">appIcon</string>
+    <string name="image_error">Error: the image is not valid</string>
+
+    <string name="dark_mode_switch">Enable or disable dark mode</string>
+    <string name="dark_mode_enable">Dark mode enabled</string>
+    <string name="light_mode_enable">Light mode enabled</string>
+    <string name="dark_mode">Dark mode</string>
+
+    <string name="language">Choose language</string>
+    <string name="choose_language">Choose the language of the app</string>
+
+    <string name="enable_notif">Enable notifications</string>
+    <string name="enable_disable_notif">Enable or disable notifications</string>
+
+    <string name="general_options">General Options</string>
+
+
+    <!-- Opciones de idioma -->
+    <string-array name="language_options">
+        <item>Spanish</item>
+        <item>English</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>es</item>
+        <item>en</item>
+    </string-array>
+
+
+</resources>

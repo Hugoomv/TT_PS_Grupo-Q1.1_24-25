@@ -11,12 +11,12 @@
 
         <item
             android:id="@+id/log_out"
-            android:icon="@drawable/ic_svg_logo"
+            android:icon="@drawable/baseline_logout_24"
             android:title="@string/logout" />
 
         <item
             android:id="@+id/delete_user"
-            android:icon="@drawable/ic_svg_logo"
+            android:icon="@drawable/baseline_delete_24"
             android:title="@string/delete_account" />
 
         <item

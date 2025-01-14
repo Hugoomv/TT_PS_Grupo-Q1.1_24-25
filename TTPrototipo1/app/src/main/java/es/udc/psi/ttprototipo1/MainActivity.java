@@ -267,6 +267,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    protected void checkRanking(){
+        rtFireBaseManagement.topTen(mAuth.getCurrentUser(), new UsersConnectedCallback() {
+            @Override
+            public void onUsersLoaded(ArrayList<User> users) {
+                /*
+                *   usar estas funciones, las demás darán datos vacíos en este caso
+                *   public String getName() { return name; }
+                *   public String getEmail() { return email; }
+                *   public int getMatchesPlayed() { return matchesPlayed; }
+                *   public int getMatchesWon(){ return matchesWon; }
+                *
+                */
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

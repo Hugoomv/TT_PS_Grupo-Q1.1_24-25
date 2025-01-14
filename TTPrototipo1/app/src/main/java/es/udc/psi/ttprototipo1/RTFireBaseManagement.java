@@ -68,10 +68,8 @@ public class RTFireBaseManagement {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    //Toast.makeText(contexto, "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
                     callback.onSuccessfulTask();
                 } else {
-                    //Toast.makeText(contexto, "Error al guardar usuario en la bd", Toast.LENGTH_SHORT).show();
                     callback.onFailedTask("registro fallido " + task.getException().getMessage());
                 }
             }
@@ -84,7 +82,6 @@ public class RTFireBaseManagement {
         dataToDelete.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                //Toast.makeText(contexto, "Usuario borrado de la bd", Toast.LENGTH_SHORT).show();
                 callback.onSuccessfulRemove();
             }
         });
@@ -479,6 +476,8 @@ public class RTFireBaseManagement {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("ranking").child(idUs);
 
         Map<String, Object> userData = new HashMap<>();
+        userData.put("name", newUser.getDisplayName());
+        userData.put("uId", idUs);
         userData.put("matchesPlayed", 0);
         userData.put("matchesWon", 0);
 
@@ -486,10 +485,8 @@ public class RTFireBaseManagement {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    //Toast.makeText(contexto, "Usuario guardado en la bd", Toast.LENGTH_SHORT).show();
                     callback.onSuccessfulTask();
                 } else {
-                    //Toast.makeText(contexto, "Error al guardar usuario en la bd", Toast.LENGTH_SHORT).show();
                     callback.onFailedTask("registro fallido " + task.getException().getMessage());
                 }
             }
@@ -516,4 +513,54 @@ public class RTFireBaseManagement {
         });
 
     }
+
+    public void topTen(FirebaseUser currentUser, UsersConnectedCallback callback){
+        ArrayList<User> totalUsers = new ArrayList<>();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("ranking");
+
+        userRef.orderByChild("matchesWon").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                totalUsers.clear();
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+
+                    String name = userSnapshot.child("name").getValue(String.class);
+                    String uid = userSnapshot.child("uId").getValue(String.class);
+                    String email = userSnapshot.child("email").getValue(String.class);
+                    int matchesPlayed = userSnapshot.child("matchesPlayed").getValue(Integer.class);
+                    int matchesWon = userSnapshot.child("matchesWon").getValue(Integer.class);
+
+                    if(name != null && email != null && matchesPlayed != 0) {
+                        if(uid.equals(currentUser.getUid()))
+                            name = String.valueOf(R.string.you);
+                        User user = new User(name, email, matchesPlayed, matchesWon);
+                        totalUsers.add(user);
+                    }
+
+                    if(totalUsers.size() == 10){
+                        break;
+                    }
+                }
+                callback.onUsersLoaded(totalUsers);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                callback.onError(error.getMessage());
+            }
+        });
+    }
+
+    public void deleteUserInRanking(FirebaseUser userToDelete, UserDeleteCallback callback){
+        DatabaseReference dataToDelete = FirebaseDatabase.getInstance().getReference("ranking").child(userToDelete.getUid());
+
+        dataToDelete.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                callback.onSuccessfulRemove();
+            }
+        });
+    }
+
 }

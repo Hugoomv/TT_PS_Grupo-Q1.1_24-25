@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -36,6 +37,7 @@ import es.udc.psi.ttprototipo1.SettingsActivity;
 import es.udc.psi.ttprototipo1.UserDeleteCallback;
 import es.udc.psi.ttprototipo1.UsersFireBaseManagement;
 import es.udc.psi.ttprototipo1.databinding.ActivityMainBinding;
+import es.udc.psi.ttprototipo1.databinding.ConfirmDeleteDialogBinding;
 import es.udc.psi.ttprototipo1.databinding.NavHeaderBinding;
 
 public class UIHelper {
@@ -47,7 +49,6 @@ public class UIHelper {
     private final String username;
 
     private UsersFireBaseManagement usersFireBaseManagement = UsersFireBaseManagement.getInstance();
-    private FirebaseAuth mAuth;
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -162,7 +163,7 @@ public class UIHelper {
     }
 
     private void logoutUser(){
-        usersFireBaseManagement.logoutUser(mAuth.getCurrentUser());
+        usersFireBaseManagement.logoutUser(FirebaseAuth.getInstance().getCurrentUser());
         Intent goLogin = new Intent(context, LoginActivity.class);
         ((Activity)context).startActivity(goLogin);
         ((Activity)context).finish();
@@ -170,8 +171,7 @@ public class UIHelper {
 
     private void alertLogout(){
 
-        mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             //alertdialog para confirmar cierre de sesión
             new AlertDialog.Builder(context).setMessage(R.string.logoutdialogtxt).setNegativeButton(R.string.cancel, (dialog, which) -> {
                 dialog.dismiss();
@@ -183,11 +183,11 @@ public class UIHelper {
         }
     }
 
-    private void deleteUser(){
+    private void deleteUser(String password){
 
-        FirebaseUser userToDelete = mAuth.getCurrentUser();
+        FirebaseUser userToDelete = FirebaseAuth.getInstance().getCurrentUser();
 
-        usersFireBaseManagement.deleteUser(userToDelete, new UserDeleteCallback() {
+        usersFireBaseManagement.deleteUser(userToDelete, password, new UserDeleteCallback() {
             @Override
             public void onSuccessfulRemove() {
                 Toast.makeText(context, R.string.userdeletedmsg, Toast.LENGTH_SHORT).show();
@@ -198,16 +198,19 @@ public class UIHelper {
             }
 
             @Override
-            public void onFailedRemove() {
-                Toast.makeText(context, R.string.notloggedinawhilemsg, Toast.LENGTH_LONG).show();
-                logoutUser();
+            public void onFailedRemove(String error) {
+                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void deleteUserAlert(){
-        new AlertDialog.Builder(context).setMessage(R.string.deleteuserdialogtxt).setPositiveButton(R.string.ok, ((dialog, which) -> {
-            deleteUser();
+
+        ConfirmDeleteDialogBinding confirmBinder = ConfirmDeleteDialogBinding.inflate(((Activity)context).getLayoutInflater());
+        View confirmView = confirmBinder.getRoot();
+
+        new AlertDialog.Builder(context).setMessage(R.string.deleteuserdialogtxt).setView(confirmView).setPositiveButton(R.string.ok, ((dialog, which) -> {
+            deleteUser(confirmBinder.reloginPass.getText().toString());
         })).setNegativeButton(R.string.cancel, ((dialog, which) -> {
             dialog.dismiss();
         })).create().show();

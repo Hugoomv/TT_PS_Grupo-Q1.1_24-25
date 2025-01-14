@@ -22,17 +22,17 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
-        <Button
-            style="@style/ButtonStyle"
-            android:id="@+id/send_button"
-            android:text="@string/send" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/user_info"
             android:textSize="20sp"
             android:text="" />
+
+        <Button
+            style="@style/ButtonStyle"
+            android:id="@+id/send_button"
+            android:text="@string/send" />
 
     </LinearLayout>
 

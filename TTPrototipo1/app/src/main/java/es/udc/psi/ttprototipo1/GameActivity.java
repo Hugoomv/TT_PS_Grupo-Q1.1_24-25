@@ -64,8 +64,10 @@ public class GameActivity extends AppCompatActivity {
             public void declareWinner(String id) {
                 if(id.equals(FirebaseAuth.getInstance().getUid())){
                     Toast.makeText(getApplicationContext(), "You win!", Toast.LENGTH_LONG).show();
+                    rtFireBaseManagement.updateRankingStats(FirebaseAuth.getInstance().getCurrentUser(), true);
                 }else{
                     Toast.makeText(getApplicationContext(), "You lose!", Toast.LENGTH_LONG).show();
+                    rtFireBaseManagement.updateRankingStats(FirebaseAuth.getInstance().getCurrentUser(), false);
                 }
 
                 rtFireBaseManagement.stopDetectingDiskChanges();

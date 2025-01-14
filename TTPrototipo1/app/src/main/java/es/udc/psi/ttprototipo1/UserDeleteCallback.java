@@ -2,6 +2,6 @@ package es.udc.psi.ttprototipo1;
 
 public interface UserDeleteCallback{
     void onSuccessfulRemove();
-    void onFailedRemove();
+    void onFailedRemove(String error);
 }
 

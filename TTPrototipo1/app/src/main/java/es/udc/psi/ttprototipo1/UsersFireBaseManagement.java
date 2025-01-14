@@ -9,7 +9,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -80,36 +82,61 @@ public class UsersFireBaseManagement {
         FirebaseAuth.getInstance().signOut();
     }
 
-    public void deleteUser(FirebaseUser userToDelete, UserDeleteCallback callback){
+    public void deleteUser(FirebaseUser userToDelete, String password, UserDeleteCallback callback){
 
-        rtFireBaseManagement.updateUserConnectionStatus(userToDelete, false);
-        rtFireBaseManagement.stopListeningToChanges();
+        AuthCredential credential = EmailAuthProvider.getCredential(userToDelete.getEmail(), password);
 
-        //borramos el usuario
-        FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+        userToDelete.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onSuccess(Void unused) {
-                //borramos los datos del usuario en RealTime Database
-                rtFireBaseManagement.deleteUserInDatabase(userToDelete, new UserDeleteCallback() {
-                    @Override
-                    public void onSuccessfulRemove() {
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    rtFireBaseManagement.updateUserConnectionStatus(userToDelete, false);
+                    rtFireBaseManagement.stopListeningToChanges();
 
-                        callback.onSuccessfulRemove();
-                    }
+                    //borramos los datos del usuario en RealTime Database
+                    rtFireBaseManagement.deleteUserInDatabase(userToDelete, new UserDeleteCallback() {
+                        @Override
+                        public void onSuccessfulRemove() {
 
-                    @Override
-                    public void onFailedRemove() {
-                        //nada
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Error", e.getMessage());
-                callback.onFailedRemove();
+                            rtFireBaseManagement.deleteUserInRanking(userToDelete, new UserDeleteCallback() {
+                                @Override
+                                public void onSuccessfulRemove() {
+                                    //borramos el usuario
+                                    FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            callback.onSuccessfulRemove();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("Error", e.getMessage());
+                                            callback.onFailedRemove(e.getMessage());
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFailedRemove(String error) {
+                                    callback.onFailedRemove(error);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailedRemove(String error) {
+                            callback.onFailedRemove(error);
+                        }
+                    });
+                }else{
+                    callback.onFailedRemove(task.getException().getMessage().toString());
+                }
             }
         });
+
+
+
+
     }
 
 

@@ -45,13 +45,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });*/
-
-
     }
 
     @Override
@@ -92,9 +85,20 @@ public class LoginActivity extends AppCompatActivity {
                 rtFireBaseManagement.setUpUserInDatabase(mAuth.getCurrentUser(), new UserSetupCallback() {
                     @Override
                     public void onSuccessfulTask() {
-                        Toast.makeText(getApplicationContext(), R.string.userindbmsg, Toast.LENGTH_SHORT).show();
+                        rtFireBaseManagement.setUpUserInRankingDatabase(mAuth.getCurrentUser(), new UserSetupCallback() {
+                            @Override
+                            public void onSuccessfulTask() {
 
-                        finish();
+                                Toast.makeText(getApplicationContext(), R.string.userindbmsg, Toast.LENGTH_SHORT).show();
+
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailedTask(String errorMsg) {
+                                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override

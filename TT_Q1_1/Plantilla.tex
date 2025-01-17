@@ -50,7 +50,7 @@ Icono de la aplicación\\
 \vspace*{3in}
 
 \begin{large}
-\raggedleft
+\raggedright
 \textbf{Autores:}\\ José Manuel Fernández Montáns (j.m.fmontans@udc.es) \\
 Mateo Rivela Santos (mateo.rivela@udc.es)\\
 Hugo Mato Cancela (hugo.matoc@udc.es)\\
@@ -96,6 +96,7 @@ Versión & Fecha & Autor \\
 2.0 & 16/11/24 & Hugo\\ \hline
 3.0 &  1/12/24 & Hugo\\ \hline
 4.0 & 24/12/24 & Hugo\\ \hline
+5.0 & 16/01/25 & Hugo\\ \hline
 
 \end{tabular}
 
@@ -115,10 +116,10 @@ Versión & Fecha & Autor \\
 \subsection{Objetivos}
 El objetivo principal será trabajar con una pantalla dividida con una baja latencia y gestionar los rebotes para una pelota que viaja entre dispositivos y añadir un menú.
 
-Podemos añadir notificaciones para que se una alguien a la partida, añadir un ranking, cambiar el tipo de pelota, añadir distintas dificultades iniciales, la pelota que aumente de velocidad con cada rebote de forma indefinida, ver las personas conectadas al juego, poner un estado a cada persona en base a si está en línea o no, o si ya está en una partida.
+Podemos añadir notificaciones para que se una alguien a la partida, añadir un ranking, la pelota que aumente de velocidad con cada rebote de forma indefinida, ver las personas conectadas al juego, poner un estado a cada persona en base a si está en línea o no, o si ya está en una partida.
 %%
 \subsection{Motivación}
-Intención de experimentar con traspaso de datos entre dispositivos e interacción de elementos de la aplicación con la pantalla del dispositivo.
+Intención de experimentar con traspaso de datos entre dispositivos e interacción de elementos de la aplicación con la pantalla del dispositivo. 
 %%
 \subsection{Trabajo relacionado}
 Existen aplicaciones similares, como es el caso de juegos de air hockey online. Nuestra aplicación busca conectar dos dispositivos de forma remota, a diferencia de las otras aplicaciones, que apuestan por una pantalla dividida para dos jugadores. Destacar que la base del juego es muy parecida, pero sin tener que conectar pantallas.
@@ -139,8 +140,7 @@ El disco, al ser golpeado por uno de los mazos, se mueve en una trayectoria dete
 Lo principal sería lograr la conexión entre dispositivos, pasar los datos de forma correcta y apropiada, que el disco pase y rebote para implementar el juego de air hockey.
 Primero, se implementará el traspaso de objetos entre pantallas y dispositivos con conexión mediante wifi-internet usando Firebase.
 Luego, trabajaremos con rebotes y bordes de la pantalla como paredes.
-Una vez realizado lo más básico, añadiremos una pantalla de menú para acceder a los ajustes y a prototipos anteriores. 
-Por último, uniremos las funcionalidades básicas, añadiremos bloques destructibles que funcionarán como paredes.
+Una vez realizado lo más básico, añadiremos una pantalla de menú y ajustes. 
 
 %%%%%%%
 %%%%%%%
@@ -153,10 +153,7 @@ Aquí se definen los prototipos de nuestro proyecto y las funcionalidades princi
 \item[P1:] Pasar un objeto entre dos dispositivos conectados por Wifi-internet usando Firebase.
 \item[P2:] Implementar los rebotes y los bordes de la pantalla del dispositivo como paredes en un modo para un jugador.
 \item[P3:] Añadimos una maza que el usuario puede manejar y que rebota con la pelota. Sigue siendo en modo para un jugador.
-\item[P4:] Añadir un menú con el que acceder a la pantalla de ajustes y a los prototipos anteriores.
-\item[P5:] Unión de funcionalidades de P1 y P2: un disco que rebota y se transporta entre dos pantallas al atravesar el borde superior. En ajustes también se podrá cambiar a izquierdo-derecho para tener más tiempo de reacción. 
-\item[P6:] Añadir bloques destructibles que funcionen como paredes.
-\item[P7:] Producto final
+\item[P4:] Añadir un menú con el que acceder a la pantalla de ajustes. Unión de funcionalidades de P1 y P2: un disco que rebota y se transporta entre dos pantallas al atravesar el borde superior. 
 \end{description}
 %%
 \subsection{Responsabilidades}
@@ -176,11 +173,9 @@ Aquí se definen los prototipos de nuestro proyecto y las funcionalidades princi
 \item Establecer una conexión de baja latencia entre ambos dispositivos.
 \item Implementar rebotes.
 \item Hacer que los bordes de la pantalla funcionen como paredes.
-\item Añadir bloques destructibles que funcionen como paredes.
 \item Crear un menú con varios ajustes.
 \item Crear una partida añadiendo a un jugador mediante invitación.
 \item Mostrar un ranking con el número de victorias o puntos.
-\item Enseñar el perfil de otros jugadores
 \end{itemize}
 
 Entregables:
@@ -188,15 +183,12 @@ Cada prototipo será una entrega.
 
 %%
 \subsection{Incidencias}
-No tenemos conocimientos sobre gráficos o físicas por lo que tendremos que aprender y probar todo lo relacionado a eso. Además, para paliar esas carencias, tenemos pensado usar LibGDX\cite{misc-libGDX} y KryoNet\cite{misc-kryonet} para la codificación general de juego. Y usaremos las librerías Box2d\cite{misc-box2d}, Tween Engine\cite{misc-tween} para las físicas y las animaciones, respectivamente. Para establecer la conexión se hará uso de Firebase\cite{misc-firebase}. En lo relacionado a Android, tomaremos como referencia lo enseñado en clase y la documentación oficial\cite{misc-android-developers}. Por último, en lo relacionado a los gráficos y apartado más visual, Canva \cite{misc-canva}.
+No tenemos conocimientos sobre gráficos o físicas por lo que tendremos que aprender y probar todo lo relacionado a eso. Además, para paliar esas carencias, tenemos pensado usar KryoNet\cite{misc-kryonet} para la codificación general de juego. Y usaremos las librerías Box2d\cite{misc-box2d}, Tween Engine\cite{misc-tween} para las físicas y las animaciones, respectivamente. Para establecer la conexión se hará uso de Firebase, concretamente RealTimeDatabase \cite{misc-firebase}. En lo relacionado a Android, tomaremos como referencia lo enseñado en clase y la documentación oficial\cite{misc-android-developers}. Por último, en lo relacionado a los gráficos y apartado más visual, Canva \cite{misc-canva}.
 \par
 En la primera iteración, probaremos la conexión entre dispositivos y que el objeto pasa correctamente entre ellos.
 En la segunda, en un prototipo distinto, el objeto debe rebotar contra los bordes de la pantalla de un dispositivo para que funcionen como paredes.
 En la tercera, implementamos la maza, que debe responder correctamente al input del usuario, y nos aseguramos de que la pelota rebote correctamente contra esta.
-En la cuarta, el menú nos debe permitir cambiar entre varios prototipos.
-En la quinta, uniremos las funcionalidades de las dos primeras iteraciones y nos aseguraremos de que funcionan correctamente ambas al mismo tiempo.
-En la sexta, añadiremos bloques que funcionen como paredes. La pelota debe rebotar contra estos como lo hace con los bordes de la pantalla.
-En la última, comprobaremos que, tras haber implementado todo, funciona correctamente.
+En la cuarta, uniremos las funcionalidades de las dos primeras iteraciones y nos aseguraremos de que funcionan correctamente ambas al mismo tiempo. Finalmente, comprobaremos que, tras haber implementado todo, funciona correctamente.
 \par
 En caso de que alguien enferme repartiremos el trabajo asignado a esa persona entre los demás integrantes del grupo.
 
@@ -206,31 +198,45 @@ En caso de que alguien enferme repartiremos el trabajo asignado a esa persona en
 \subsection{Arquitectura}
 Se hará uso de una arquitectura centralizada cliente-servidor. La distribución de trabajo se hará entre el servidor (Firebase) y el cliente (el usuario de nuestra app). El servidor almacena la información de los usuarios y los mensajes que envían. Guardará datos como si el usuario está conectado o no, su id (único para cada uno), nombre, correo y contraseña. El cliente revisa el usuario actual, con el que estamos logueados, en el servidor y tiene un listener que escucha los cambios, como son los mensajes recibidos por otros usuarios.
 
-
 \subsection{Persistencia}
-Respecto a qué información almacenaremos, ambos jugadores siempre tendrán los datos de la posición, ángulo y fuerza de la pelota. Además, cada uno guardará dónde está situada su propia maza en caso de que esté siendo usada. El servidor guardará las coordenadas de la pelota, que los usuarios obtendrán de forma constante. \\
+Respecto a qué información almacenaremos, los jugadores obtendrán la posición de la pelota una vez sale de la pantalla de su oponente. Además, cada uno guardará dónde está situada su propia maza en caso de que esté siendo usada. El servidor guardará las coordenadas de la pelota. \\
 Mientras el usuario está conectado, podrá recibir datos, invitaciones o mensajes y se mostrará como online. Una vez que esté fuera de línea, no será posible que reciba nada de lo anterior. Cuando vuelva a conectarse, se actualizará y cargará los mensajes que recibió mientras estaba offline.
 
 \subsection{Vista}
-En lo que respecta al diseño de la aplicación, tendremos una única actividad a priori en la que, mediante fragmentos, iremos añadiendo la dinámica. El manejo del juego en sí se hará mediante un view personalizado, mostrando todos los elementos y actualizando sus respectivas posiciones cada cierto tiempo. \\
-En la primera pantalla el usuario se podrá loguear o registrar. Introducirá su email y su contraseña. Una vez dentro, en la pantalla principal se mostrarán varios botones: 
+En lo que respecta al diseño de la aplicación, tendremos una actividad principal desde la que se llaman a los demás componentes al cumplir ciertas condiciones:\\
+
 \begin{itemize}
-    \item Jugar: Permitirá iniciar el juego en modo solitario o en línea.
-    \item Ajustes: Mostrará un menú con varias opciones que modificar, como cambiar la orientación de la pantalla.
-    \item Invitar: Abrirá un desplegable para poder iniciar una partida con otro usuario.
+    \item Se llama a LoginActivity en caso de que no haya un usuario con sesión abierta en la app. Tiene los siguientes elementos:
+    \begin{itemize}
+        \item TextView con un mensaje que indica la necesidad de iniciar sesión para usar la aplicación.
+	\item Imagen con el icono de la app.
+        \item Botón de inicio de sesión, que abre un AlertDialog con los campos para introducir los datos del usuario y un botón para registrar un nuevo usuario
+        \item Botón de registro, que abre un AlertDialog similar al abierto por el botón de inicio de sesión
+    \end{itemize}
+    Tras iniciar sesión, se devuelve al usuario a la actividad principal que cuenta con dos botones y un TextView:
+    \begin{itemize}
+       \item El TextView muestra una lista con los datos de los 10 jugadores con mayor número de victorias. 
+        
+        \item El botón de Top Players oculta o revela el TextView, además de actualizar la información del mismo.
+    \end{itemize}
+
+    \item Se llama a GameActivity al comenzar una partida. Esta actividad gestiona el manejo del juego mediante un view personalizado, que muestra todos los elementos y actualiza sus respectivas posiciones cada cierto tiempo.
+
+    \item Se mostrarán ajustes al presionar el botón correspondiente en el menú. Mostrará un menú con varias opciones para modificar la configuración de la aplicación mediante SharedPreferences, cerrar sesión o borrar el usuario. Las dos últimas opciones muestran un AlertDialog para confirmación, y el de borrado de usuario requiere además la contraseña del mismo.
 \end{itemize}
 
 
 \subsection{Comunicaciones}
-La comunicación en este juego es una parte fundamental. Para ello, buscamos un sistema de baja latencia. Para esta conexión, se contará con un servidor central al que cada cliente se conectará por internet (Firebase), de esta forma, se gana en rango de uso (rango global). Existe un claro problema y es que el servidor del que se va a hacer uso es gratuito y, por lo tanto, la latencia va a ser bastante alta, pero hemos llegado a la conclusión de que no es crítico para este proyecto porque, como cada usuario en una partida solo va a ver su pantalla a priori. En el caso de que ambos jugadores estén juntos físicamente, la latencia sería notable.
+La comunicación en este juego es una parte fundamental. Para ello, buscamos un sistema de baja latencia. Para esta conexión, se contará con un servidor central al que cada cliente se conectará por internet (Firebase, concretamente RealTimeDatabase); de esta forma, se gana en rango de uso (rango global). Este servidor será usado para el envío de datos en la partida y para las invitaciones entre usuarios. Existe un claro problema y es que el servidor del que se va a hacer uso es gratuito y, por lo tanto, la latencia va a ser bastante alta. Sin embargo, hemos llegado a la conclusión de que no es crítico para este proyecto porque, como cada usuario en una partida solo va a ver su pantalla a priori. En el caso de que ambos jugadores estén juntos físicamente, la latencia sería notable.
 
 \subsection{Sensores}
 Se hace uso de la pantalla táctil, con este se implementará el movimiento del mazo en cuestión. Es un dispositivo que detecta y responde al contacto físico o la presión sobre su superficie, en este caso no se hará uso de la detección de la presión. Para la implementación del rebote se puede tener o no en cuenta la velocidad con la que se desplaza en contacto con el panel táctil, pero no es algo que vayamos a implementar en nuestro caso desde a priori.
+
 \subsection{Trabajo en background}
-Se enviarán los datos de la posición y ángulo de la pelota, cada X tiempo. Se usa Firebase para trabajar con una comunicación y latencia en tiempo real. Para controlar la velocidad de actualización de la pantalla y evitar sobrecargar la CPU, usaremos un servicio que recibirá las coordenadas del servidor. Con cada nueva información, se modificará la posición de la pelota en la pantalla.
+Se han establecido listeners para detectar cambios en los datos pertinentes de la base de datos en tiempo real, por lo que se actualizarán únicamente cuando sea necesario. Se usa Firebase para trabajar con una comunicación y latencia en tiempo real. Los datos de la posición y ángulo de la pelota se envían una vez sale de la pantalla del usuario y pasa al otro jugador. Esta política de funcionamiento nos permite trabajar usando menos datos, haciendo el proceso más sencillo y rápido. 
 
 \section{Arquitectura Propuesta}
-Ahora mismo es una aplicación monolítica y cambiará a CLEAN Arquitecture. En esta primera iteración hay una actividad principal que incluye todo, user y UsersAdapter para el ListView que muestra los usuarios conectados. 
+La aplicación comenzó siendo monolítica y cambiará a CLEAN Arquitecture. En la primera iteración hay una actividad principal que incluye todo, user y UsersAdapter para el ListView que muestra los usuarios conectados. Según avanzan las iteraciones, se modifica la organización del código, haciendo uso de varias clases e interfaces, para organizar. Esto se consigue separando las funciones relacionadas a Firebase a nuevos arhcivos y clases. Para la creación de las interfaces y gestionar el menú se hará el mismo procedimiento.
 
 \section{Diseño e implementación}
 \subsection{1ª iteración}
@@ -245,21 +251,21 @@ A continuación se explica el funcionamiento de los botones:
 En la figura 1 se muestran unas imágenes de la interfaz. 
 \begin{figure}[htp]
     \centering
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}{0.3\textwidth}
         \centering
         \includegraphics[width=0.6\textwidth]{Images/Vista_It1.jpg} 
         \caption{Pantalla de inicio}
         \label{fig:Pantalla de inicio}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}{0.3\textwidth}
         \centering
         \includegraphics[width=0.6\textwidth]{Images/Vista_It1_2.jpg} 
         \caption{Pantalla una vez iniciada sesión}
-        \label{fig:figura2}
+        \label{fig:Pantalla una vez iniciada sesión}
     \end{minipage}
     \caption{Pantallas de la primera iteración}
-    \label{fig:side_by_side}
+    \label{fig:primera iteración}
 \end{figure}
 
 UsersAdapters y Users es usado para la implementación del ListView que muestra los usuarios conectados (tras pulsar Send). La app se conecta a Firebase, donde se han creado varios usuarios para comprobar que funciona correctamente, con su login y logout, y se ha implementado el envío de mensajes, lo que representaría a los primeros hitos.
@@ -270,30 +276,31 @@ Para esta iteración, la intención era crear un nuevo prototipo donde ver el fu
 Al mismo tiempo que se implementaban las físicas, otra parte del equipo que estaba libre, decidió actualizar la interfaz de usuario para mejorar su aspecto. Para ello se ha hecho uso de estilos, buscando homogeneidad y separación de los bordes y otros elementos. También se ha añadido un menú lateral donde ver la foto de perfil (por implementar), la configuración (de momento vacía) y poder salir de la aplicación. En un futuro, puede que se modifique por un cambio de diseño y por la comodidad del usuario. Además, la interfaz principal ahora es un Drawer donde está el layout anterior y la toolbar con el botón para el menú lateral.\\ 
 Por último, también se comenzó con la transición para cambiar el diseño monolítico de la aplicación. Las funciones responsables de la creación del menú están en un fichero distinto llamado UIHelper. Estas incluyen la creación del menú lateral, el botón del menú en el toolbar, la gestión del drawer y las opciones del menú.
 La figura 2 contiene 2 capturas donde se ve el nuevo diseño de la UI y el menú lateral.
+
 \begin{figure}[htp]
     \centering
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/Vista_It2.png} 
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It2.png} 
         \caption{Pantalla de inicio}
         \label{fig:Pantalla de inicio}
     \end{minipage}
     \hfill
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/Vista_It2_2.png} 
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It2_2.png} 
         \caption{Menú lateral}
-        \label{fig:figura2}
+        \label{fig:Menú lateral}
     \end{minipage}
     \hfill
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/Vista_It2_3.png} 
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It2_3.png} 
         \caption{Pantalla de juego}
-        \label{fig:figura2}
+        \label{fig:Pantalla de juego}
     \end{minipage}
     \caption{Pantallas de la segunda iteración}
-    \label{fig:side_by_side}
+    \label{fig:segunda iteración}
 \end{figure}
 
 \subsection{3ª iteración}
@@ -305,26 +312,103 @@ En la interfaz, se han actualizado los colores principales de la app, junto a pe
     \centering
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/Vista_It3_3.png} 
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It3_3.png} 
         \caption{Nueva SplashScreen}
-        \label{fig:figura2}
+        \label{fig:Nueva SplashScreen}
     \end{minipage}
     \hfill
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/Vista_It3.png} 
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It3.png} 
         \caption{Pantalla de inicio}
         \label{fig:Pantalla de inicio}
     \end{minipage}
     \hfill
     \begin{minipage}{0.3\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/Vista_It3_2.png} 
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It3_2.png} 
         \caption{Nuevo menú lateral}
-        \label{fig:figura2}
+        \label{fig:menú lateral}
     \end{minipage}
     \caption{Pantallas de la tercera iteración}
-    \label{fig:side_by_side}
+    \label{fig:tercera iteración}
+\end{figure}
+
+\subsection{4ª iteración}
+En este punto la app está casi completa. Como se puede ver en las capturas, en el apartado gráfico, se han actualizado los íconos de la app en Resources, la SplashScreen ahora usa el ícono de la app, el menú ahora tiene nuevos botones para cerrar sesión, ajustes, borrar cuenta, salir de la app y un icono en la cabecera personalizable; se ha añadido modo oscuro, soporte para el inglés. Además, la nueva pantalla de inicio incluye el icono de la app, los botones adoptan el diseño correspondiente, el alert dialog para loguearse o registrarse ha sido actualizado y también hay un ranking de mejores jugadores. \\
+De cara a lo relacionado con el juego en sí, ahora para iniciar partida se envía una invitación al otro jugador que puede aceptar o rechazar, se ha añadido un sistema para decidir al ganar en base a puntos y un botón de no molestar que no permite recibir invitaciones y la pantalla de inicio ahora exige estar logueado o crear una cuenta para acceder a la app.
+
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4.png} 
+        \caption{SplashScreen actualizada}
+        \label{fig:SplashScreen actualizada}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_1.png} 
+        \caption{Nueva pantalla de inicio}
+        \label{fig:Pantalla de inicio}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_2.png} 
+        \caption{Pantalla principal}
+        \label{fig:pantalla principal}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[htp]
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_3.png} 
+        \caption{Nueva leaderboard}
+        \label{fig:leaderboard}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_4.png} 
+        \caption{Menú lateral actualizado}
+        \label{fig:menú lateral actualizado}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_5.png} 
+        \caption{Ajustes actualizados}
+        \label{fig:ajustes actualizado}
+    \end{minipage}
+\end{figure}
+
+
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_6.png} 
+        \caption{Inicio}
+        \label{fig:pantalla principal}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_7.png} 
+        \caption{Menú lateral}
+        \label{fig:menñu lateral}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Images/Vista_It4_8.png} 
+        \caption{Ajustes}
+        \label{fig:ajustes}
+    \end{minipage}
+    \caption{Capturas de pantalla de la cuarta iteración}
 \end{figure}
 
 \section{Pruebas}
@@ -337,7 +421,34 @@ Para el segundo hito se han realizado comprobaciones de que la pelota rebota cor
 
 \subsection{$3^{as} \text{ pruebas}$}
 Las pruebas para el {$3^{er}$} entregable son básicas. Para la SplashScreen simplemente se revisa que funciona al iniciar app y que se aplica el tema correspondiente después. Para el nuevo menú, se han añadido toast para comprobar que funciona correctamente a pesar de no tener implementación. Finalmente, el juego se testea haciendo uso de la maza y lanzando la pelota a la parte superior de la pantalla.
+
+\subsection{$4^{as} \text{ pruebas}$}
+Para esta iteración, se ha revisado el correcto funcionamiento de toda la app. Esto incluye comprobar que se crean, actualizan y borran los usuarios de forma correcta en la BD, para ello, se accede al proyecto en Firebase; la bola se envía correctamente entre dispositivos y el modo no molestar funciona, ejecutando dos emuladores de forma simultánea, y se han probado cambios en la interfaz al pasar a tema oscuro o al inglés. Para ello se ha hecho uso de los botones en la app o ejecutado órdenes de forma directa. También se ha probado que el menú y los botones realizan las acciones asignadas de forma correcta, la tabla de top jugadores muestra los resultados adecuados, se puede cambiar el icono del menú y se guardan las preferencias de forma exitosa. Adicionalmente, para corroborar que los datos son correctos, se han añadido logs o toast en lugares puntuales, principalmente errores.
 %%%%%%%
+
+\section{Trabajo futuro}
+La app,  si bien es completamente funcional, todavía tiene espacio para mejora. Entre las posibles modificaciones que se podrían realizar en un futuro están las siguientes:
+
+\begin{itemize}
+
+\item Modificar el sistema de invitaciones para que notifique al usuario con notificaciones, de forma que no tenga que tener abierta la aplicación.
+
+\item Modificar la interfaz gráfica: Añadir más animaciones y elementos visuales relacionados con la temática de la aplicación.
+
+\item Proporcionar elementos que aporten feedback auditivo al usuario: Música de fondo (distinta en la actividad principal y los menús y las partidas en sí) o efectos de sonido que resalten sucesos importantes (como rebotes de la pelota).
+
+\item Asignar la foto al usuario y no a la configuración de la aplicación (Storage de Firebase es de pago).
+
+\item Incluir un modo de juego para una persona, que no requiera de conexión a internet o usuarios activos.
+
+\item Publicar la app en la PlayStore.
+
+\end{itemize}
+
+\section{Incidencias destacables en la realización del TT}
+Uno de los mayores problemas fue la falta de conocimiento a la hora de afrontar todo lo relacionado con Firebase. Si bien no es muy complejo, este proyecto fue el primer contacto del equipo. Esto supuso varios problemas a lo largo del desarrollo y aumentó el tiempo dedicado a esta parte. Algo similar ocurrió en la creación y manipulación de iconos y animaciones. \\
+Además, la gestión y estimación de tareas no fue la óptima. Esto derivó en una mala planificación del tiempo y lo que al principio suponía un proyecto sencillo acabó siendo de mucha mayor envergadura.
+
 
 \section{Bibliografía}
 \bibliographystyle{pfc-fic}

@@ -8,6 +8,8 @@
     <string name="logout">Cerrar sesión</string>
     <string name="delete_account">Borrar cuenta</string>
     <string name="top_players">Mejores jugadores</string>
+    <string name="times_played">jugó</string>
+    <string name="times_won">ganó</string>
 
     <string name="loginscreentxt">Inicia sesión para usar la app</string>
     <string name="logindialogtxt">Inicia sesión con una cuenta ya creada</string>
@@ -15,6 +17,7 @@
     <string name="logoutdialogtxt">¿Seguro que quieres cerrar sesión?</string>
     <string name="deleteuserdialogtxt">¿Seguro que quieres borrar el usuario?</string>
     <string name="selectuserdialogtxt">Seleccione un usuario</string>
+    <string name="invitesent">mandó una invitación</string>
     <string name="acceptinvitequestiontxt">¿Aceptar?</string>
 
     <string name="stablishname">Nombre de usuario:</string>

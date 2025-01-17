@@ -169,17 +169,13 @@ public class RTFireBaseManagement {
                         DatabaseReference senderData = FirebaseDatabase.getInstance().getReference("users").child(remitente);
                         String message = snapshot.child("message").getValue(String.class);
 
-                        senderData.child("name").addValueEventListener(new ValueEventListener() {
+                        senderData.child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot anotherSnapshot) {
                                 //para recepción de mensajes
                                 String sender = anotherSnapshot.getValue(String.class);
 
                                 callback.onManageChanges(sender, remitente, message);
-
-                                snapshot.getRef().child("message").setValue("");
-                                snapshot.getRef().child("isWith").setValue("");
-                                snapshot.getRef().child("isAvailable").setValue(true);
                             }
 
                             @Override
@@ -199,6 +195,13 @@ public class RTFireBaseManagement {
             };
             myData.addValueEventListener(myDataListener);
         }
+    }
+
+    public void cleanData(){
+        DatabaseReference userData = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userData.child("message").setValue("");
+        userData.getRef().child("isWith").setValue("");
+        userData.getRef().child("isAvailable").setValue(true);
     }
 
     public void sendMessage(FirebaseUser sender, String userId, String message){

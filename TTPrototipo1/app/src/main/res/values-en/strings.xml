@@ -8,6 +8,8 @@
     <string name="logout">Log Out</string>
     <string name="delete_account">Delete Account</string>
     <string name="top_players">Top Players</string>
+    <string name="times_played">played</string>
+    <string name="times_won">won</string>
 
     <string name="loginscreentxt">Log in to use the app</string>
     <string name="logindialogtxt">Log in with an existing account</string>
@@ -15,6 +17,7 @@
     <string name="logoutdialogtxt">Are you sure you want to log out?</string>
     <string name="deleteuserdialogtxt">Are you sure you want to delete the user?</string>
     <string name="selectuserdialogtxt">Select a user</string>
+    <string name="invitesent">wants to play</string>
     <string name="acceptinvitequestiontxt">Accept?</string>
 
     <string name="stablishname">Username:</string>

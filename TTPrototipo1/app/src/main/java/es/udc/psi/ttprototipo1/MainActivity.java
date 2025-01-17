@@ -54,13 +54,17 @@ public class MainActivity extends AppCompatActivity {
 
     private UIHelper uiHelper;
 
-    private boolean seeingTop;
+    private boolean seeingRanking;
+
+    private boolean processing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         // Instalar la Splash Screen
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+
+        processing = false;
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         binder.userInfo.setVisibility(View.GONE);
-        seeingTop = false;
+        seeingRanking = false;
 
         // Pasar las vistas necesarias a UIHelper
         uiHelper = new UIHelper(this, binder.drawerLayout, binder.navigationView, binder.toolbar, username, email);
@@ -121,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
                     sendButtonAlert();
 
                 }else if (v.getId() == binder.topButton.getId()){
-                    if(seeingTop){
+                    if(seeingRanking){
                         binder.userInfo.setVisibility(View.GONE);
-                        seeingTop = false;
+                        seeingRanking = false;
                     }else{
                         checkRanking();
                     }
@@ -152,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
             goLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goLogin);
             finish();
+        }
+
+        if(seeingRanking){
+            checkRanking();
         }
 
     }
@@ -249,10 +257,12 @@ public class MainActivity extends AppCompatActivity {
         rtFireBaseManagement.listenToChanges(new ChangesListenCallback() {
             @Override
             public void onManageChanges(String sender, String senderId, String message) {
-                if(message != null && sender != null){
+                if(!processing && message != null && sender != null){
+
+                    processing = true;
 
                     if(message.equals("invite")){
-                        managePetition(senderId, sender + " sent " + message);
+                        managePetition(senderId, sender + " " + getText(R.string.invitesent));
                     }if(message.equals("accept")){
                         String newMatchId = mAuth.getCurrentUser().getUid()+senderId;
                         Intent matchAct = new Intent(MainActivity.this, GameActivity.class);
@@ -269,6 +279,10 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
 
+                    rtFireBaseManagement.cleanData();
+
+                    processing = false;
+
                 }
             }
 
@@ -283,33 +297,26 @@ public class MainActivity extends AppCompatActivity {
         rtFireBaseManagement.topTen(mAuth.getCurrentUser(), new UsersConnectedCallback() {
             @Override
             public void onUsersLoaded(ArrayList<User> users) {
-                /*
-                *   usar estas funciones, las demás darán datos vacíos en este caso
-                *   public String getName() { return name; }
-                *   public int getMatchesPlayed() { return matchesPlayed; }
-                *   public int getMatchesWon(){ return matchesWon; }
-                *
-                */
 
                 StringBuilder ranking = new StringBuilder();
                 int i = 1;
 
                 for (User actualUser : users){
                     ranking.append(i).append("->").append(actualUser.getName().toString())
-                        .append(": played ")
+                        .append(": ").append(getText(R.string.times_played)).append(" ")
                         .append(actualUser.getMatchesPlayed())
-                        .append(", won ")
+                        .append(", ").append(getText(R.string.times_won)).append(" ")
                         .append(actualUser.getMatchesWon())
                         .append("\n");
 
                     i++;
                 }
 
-                Log.d("cosas", ranking.toString());
+                Log.d("ranking", ranking.toString());
 
                 binder.userInfo.setText(ranking.toString());
                 binder.userInfo.setVisibility(View.VISIBLE);
-                seeingTop = true;
+                seeingRanking = true;
             }
 
             @Override

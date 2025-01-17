@@ -1,6 +1,8 @@
 package es.udc.psi.ttprototipo1;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,10 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.ByteArrayOutputStream;
 
 public class UsersFireBaseManagement {
 
@@ -133,8 +139,6 @@ public class UsersFireBaseManagement {
                 }
             }
         });
-
-
 
 
     }

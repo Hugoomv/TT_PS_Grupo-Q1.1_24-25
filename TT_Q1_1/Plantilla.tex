@@ -39,15 +39,20 @@
 \end{center}
 \end{figure}
 
-\vspace*{1in}
 PROGRAMACIÓN DE SISTEMAS 24/25 Q1\\
-Icono de la aplicación\\
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=5cm]{Images/logo.jpg}
+\end{center}
+\end{figure}
+
 \vspace*{1in}
 \begin{Large}
 \textbf{Juego de air hockey con pantalla dividida} \\
 \end{Large}
 
-\vspace*{3in}
+\vspace*{2.5in}
 
 \begin{large}
 \raggedright
@@ -55,8 +60,8 @@ Icono de la aplicación\\
 Mateo Rivela Santos (mateo.rivela@udc.es)\\
 Hugo Mato Cancela (hugo.matoc@udc.es)\\
 \textbf{Persona de contacto:} Hugo\\
-\textbf{Fecha:}\textit{ A Coruña, 24 de Diciembre 2024}\\
-\textbf{Versión:}\textit{4.0}\\
+\textbf{Fecha:}\textit{ A Coruña, 20 de Enero 2025}\\
+\textbf{Versión:}\textit{5.0}\\
 \textbf{Nombre de la aplicación:} \textit{Space Rend Hockey}\\
 \textbf{Github:} \url{https://github.com/Hugoomv/TT_PS_Grupo-Q1.1_24-25}\\
 \end{large}
@@ -183,7 +188,7 @@ Cada prototipo será una entrega.
 
 %%
 \subsection{Incidencias}
-No tenemos conocimientos sobre gráficos o físicas por lo que tendremos que aprender y probar todo lo relacionado a eso. Además, para paliar esas carencias, tenemos pensado usar KryoNet\cite{misc-kryonet} para la codificación general de juego. Y usaremos las librerías Box2d\cite{misc-box2d}, Tween Engine\cite{misc-tween} para las físicas y las animaciones, respectivamente. Para establecer la conexión se hará uso de Firebase, concretamente RealTimeDatabase \cite{misc-firebase}. En lo relacionado a Android, tomaremos como referencia lo enseñado en clase y la documentación oficial\cite{misc-android-developers}. Por último, en lo relacionado a los gráficos y apartado más visual, Canva \cite{misc-canva}.
+No tenemos conocimientos sobre gráficos o físicas por lo que tendremos que aprender y probar todo lo relacionado a eso. Para establecer la conexión se hará uso de Firebase, concretamente RealTimeDatabase \cite{misc-firebase}. En lo relacionado a Android, tomaremos como referencia lo enseñado en clase y la documentación oficial\cite{misc-android-developers}. Por último, en lo relacionado a los gráficos y apartado más visual, Canva \cite{misc-canva}.
 \par
 En la primera iteración, probaremos la conexión entre dispositivos y que el objeto pasa correctamente entre ellos.
 En la segunda, en un prototipo distinto, el objeto debe rebotar contra los bordes de la pantalla de un dispositivo para que funcionen como paredes.
@@ -218,11 +223,14 @@ En lo que respecta al diseño de la aplicación, tendremos una actividad princip
        \item El TextView muestra una lista con los datos de los 10 jugadores con mayor número de victorias. 
         
         \item El botón de Top Players oculta o revela el TextView, además de actualizar la información del mismo.
+        
+        \item El botón de mandar invitación abre un AlertDialog con un ListView con los usuarios activos, al seleccionar uno y hacer click en el botón OK, manda una invitación al usuario en forma de AlertDialog.
     \end{itemize}
 
     \item Se llama a GameActivity al comenzar una partida. Esta actividad gestiona el manejo del juego mediante un view personalizado, que muestra todos los elementos y actualiza sus respectivas posiciones cada cierto tiempo.
 
     \item Se mostrarán ajustes al presionar el botón correspondiente en el menú. Mostrará un menú con varias opciones para modificar la configuración de la aplicación mediante SharedPreferences, cerrar sesión o borrar el usuario. Las dos últimas opciones muestran un AlertDialog para confirmación, y el de borrado de usuario requiere además la contraseña del mismo.
+
 \end{itemize}
 
 
@@ -233,7 +241,7 @@ La comunicación en este juego es una parte fundamental. Para ello, buscamos un 
 Se hace uso de la pantalla táctil, con este se implementará el movimiento del mazo en cuestión. Es un dispositivo que detecta y responde al contacto físico o la presión sobre su superficie, en este caso no se hará uso de la detección de la presión. Para la implementación del rebote se puede tener o no en cuenta la velocidad con la que se desplaza en contacto con el panel táctil, pero no es algo que vayamos a implementar en nuestro caso desde a priori.
 
 \subsection{Trabajo en background}
-Se han establecido listeners para detectar cambios en los datos pertinentes de la base de datos en tiempo real, por lo que se actualizarán únicamente cuando sea necesario. Se usa Firebase para trabajar con una comunicación y latencia en tiempo real. Los datos de la posición y ángulo de la pelota se envían una vez sale de la pantalla del usuario y pasa al otro jugador. Esta política de funcionamiento nos permite trabajar usando menos datos, haciendo el proceso más sencillo y rápido. 
+Se han establecido listeners para detectar cambios en los datos pertinentes de la base de datos en tiempo real, por lo que se actualizarán únicamente cuando sea necesario. Se usa Firebase para trabajar con una comunicación y latencia en tiempo real. Los datos de la posición y ángulo de la pelota se envían una vez sale de la pantalla del usuario y pasa al otro jugador. Esta política de funcionamiento nos permite trabajar usando menos datos, haciendo el proceso más sencillo y rápido. Adicionalmente, en el GameActivity se usan hilos para ejecutar el juego.
 
 \section{Arquitectura Propuesta}
 La aplicación comenzó siendo monolítica y cambiará a CLEAN Arquitecture. En la primera iteración hay una actividad principal que incluye todo, user y UsersAdapter para el ListView que muestra los usuarios conectados. Según avanzan las iteraciones, se modifica la organización del código, haciendo uso de varias clases e interfaces, para organizar. Esto se consigue separando las funciones relacionadas a Firebase a nuevos arhcivos y clases. Para la creación de las interfaces y gestionar el menú se hará el mismo procedimiento.
